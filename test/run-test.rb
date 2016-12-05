@@ -40,7 +40,7 @@ Dir.glob("#{__dir__}/apps/*") do |test_application|
     :chdir => test_application,
   }
   unless system(env, *command_line, options)
-    succuess = false
+    success = false
   end
 end
 
