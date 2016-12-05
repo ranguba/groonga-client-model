@@ -23,7 +23,7 @@ require "pathname"
 base_dir = Pathname.new(__FILE__).dirname.parent.parent.expand_path
 
 lib_dir = base_dir + "lib"
-test_dir = base_dir + "test"
+test_dir = base_dir + "test/unit"
 
 $LOAD_PATH.unshift(lib_dir.to_s)
 
