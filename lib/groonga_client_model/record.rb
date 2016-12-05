@@ -110,6 +110,11 @@ module GroongaClientModel
       end
     end
 
+    def update(attributes)
+      assign_attributes(attributes)
+      save
+    end
+
     def to_model
       self
     end
