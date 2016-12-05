@@ -1,0 +1,4 @@
+table_create posts TABLE_NO_KEY
+
+column_create posts title COLUMN_SCALAR ShortText
+column_create posts body COLUMN_SCALAR Text
