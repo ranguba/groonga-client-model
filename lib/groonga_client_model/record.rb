@@ -110,6 +110,13 @@ module GroongaClientModel
       end
     end
 
+    def save!(validate: false)
+      unless save(validate: validate)
+        message = "Failed to save the record"
+        raise RecordNotSaved.new(message, self)
+      end
+    end
+
     def update(attributes)
       assign_attributes(attributes)
       save
