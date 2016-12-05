@@ -47,7 +47,8 @@ module GroongaClientModel
 
       def all
         Client.open do |client|
-          response = client.select(table: table_name,
+          table = schema.tables[table_name]
+          response = client.select(table: table.name,
                                    limit: -1)
           response.records.collect do |attributes|
             record = new(attributes)
@@ -59,7 +60,8 @@ module GroongaClientModel
 
       def find(id)
         Client.open do |client|
-          response = client.select(table: table_name,
+          table = schema.tables[table_name]
+          response = client.select(table: table.name,
                                    filter: "_id == #{id}",
                                    limit: 1)
           attributes = response.records.first

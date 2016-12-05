@@ -38,15 +38,24 @@ module GroongaClientModel
       end
 
       def [](name)
+        name = name.to_s if name.is_a?(Symbol)
         raw_table = @raw[name]
-        raise Error, "table doesn't exist: <#{name}>" if raw_table.nil?
+        raise Error, "table doesn't exist: <#{name.inspect}>" if raw_table.nil?
         Table.new(raw_table)
+      end
+
+      def exist?(name)
+        @raw.key?(name)
       end
     end
 
     class Table
       def initialize(raw)
         @raw = raw
+      end
+
+      def name
+        @raw.name
       end
 
       def columns
