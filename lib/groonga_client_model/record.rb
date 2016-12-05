@@ -110,6 +110,7 @@ module GroongaClientModel
       assign_attributes(attributes) if attributes
 
       @new_record = true
+      @destroyed = false
     end
 
     def save(validate: false)
@@ -129,6 +130,23 @@ module GroongaClientModel
         message = "Failed to save the record"
         raise RecordNotSaved.new(message, self)
       end
+    end
+
+    def destroy
+      if persisted?
+        Client.open do |client|
+          table = self.class.schema.tables[self.class.table_name]
+          response = client.delete(table: table.name,
+                                   filter: "_id == #{_id}")
+          unless response.success?
+            message = "Failed to delete the record: "
+            message << "#{response.error_code}: #{response.error_message}"
+            raise Error.new(message, self)
+          end
+        end
+      end
+      @destroyed = true
+      freeze
     end
 
     def update(attributes)
@@ -160,8 +178,14 @@ module GroongaClientModel
       @new_record
     end
 
+    def destroyed?
+      @destroyed
+    end
+
     def persisted?
-      not @new_record
+      return false if @new_record
+      return false if @destroyed
+      true
     end
 
     private
