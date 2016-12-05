@@ -45,6 +45,16 @@ module GroongaClientModel
         end
       end
 
+      def count
+        Client.open do |client|
+          table = schema.tables[table_name]
+          response = client.select(table: table.name,
+                                   limit: 0,
+                                   output_columns: ["_id"])
+          response.n_hits
+        end
+      end
+
       def all
         Client.open do |client|
           table = schema.tables[table_name]
@@ -72,6 +82,10 @@ module GroongaClientModel
           record.instance_variable_set(:@new_record, false)
           record
         end
+      end
+
+      def last
+        all.last
       end
 
       private
