@@ -23,5 +23,5 @@ script:
     for test_app in ${PWD}/test/apps/*
     do
       (cd ${test_app} && \
-        BUNDLE_GEMFILE=${PWD}/Gemfile bin/rails test)
+        BUNDLE_GEMFILE=${PWD}/Gemfile bin/rails groonga:schema:load test)
     done

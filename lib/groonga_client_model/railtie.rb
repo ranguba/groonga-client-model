@@ -34,6 +34,10 @@ module GroongaClientModel
 
     config.eager_load_namespaces << GroongaClientModel
 
+    rake_tasks do
+      load "groonga_client_model/railties/groonga.rake"
+    end
+
     initializer "groonga_client_model.logger" do
       ActiveSupport.on_load(:groonga_client_model) do
         self.logger ||= Rails.logger
