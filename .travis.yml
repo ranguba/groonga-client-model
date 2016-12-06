@@ -15,12 +15,14 @@ install:
   - |
     for test_app in ${PWD}/test/apps/*
     do
-      (echo ${test_app}; cd ${test_app} && bundle install --jobs=3 --retry=3)
+      (cd ${test_app} && \
+        BUNDLE_GEMFILE=${PWD}/Gemfile bundle install --jobs=3 --retry=3)
     done
 script:
   - bundle exec ruby test/unit/run-test.rb
   - |
     for test_app in ${PWD}/test/apps/*
     do
-      (echo ${test_app}; cd ${test_app} && bin/rails test)
+      (cd ${test_app} && \
+        BUNDLE_GEMFILE=${PWD}/Gemfile bin/rails test)
     done
