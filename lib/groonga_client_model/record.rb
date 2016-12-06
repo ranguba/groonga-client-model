@@ -209,9 +209,12 @@ module GroongaClientModel
           id = response.ids.first
           if id.nil?
             if @attributes.key?("_key")
+              key = _key
+              if key.is_a?(String)
+                key = Groonga::Client::ScryptSyntax.format_string(key)
+              end
               select_response = client.select(table: table.name,
-                                              # TODO: #{_key} is dangerous
-                                              filter: "_key == #{_key}",
+                                              filter: "_key == #{key}",
                                               limit: 1,
                                               output_columns: "_id")
             else
