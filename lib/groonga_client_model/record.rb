@@ -14,6 +14,8 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+require "date"
+
 module GroongaClientModel
   class Record
     extend ActiveModel::Naming
@@ -38,8 +40,6 @@ module GroongaClientModel
         return if defined?(@defined)
         @defined = true
         columns.each do |name, column|
-          define_attribute_methods name
-
           attribute_method_suffix "="
           define_attribute_methods name
         end
@@ -193,7 +193,7 @@ module GroongaClientModel
       Client.open do |client|
         table = self.class.schema.tables[self.class.table_name]
         response = client.load(table: table.name,
-                               values: [attributes],
+                               values: [load_values],
                                output_ids: "yes",
                                command_version: "3")
         unless response.success?
@@ -231,6 +231,22 @@ module GroongaClientModel
         @new_record = false
         true
       end
+    end
+
+    def load_values
+      values = {}
+      @attributes.each do |name, value|
+        case value
+        when Date
+          value = value.strftime("%Y-%m-%d 00:00:00")
+        when Time
+          value = value.strftime("%Y-%m-%d %H:%M:%S.%6N")
+        else
+          value = value
+        end
+        values[name] = value
+      end
+      values
     end
   end
 end
