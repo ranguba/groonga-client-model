@@ -192,8 +192,9 @@ module GroongaClientModel
     def upsert
       Client.open do |client|
         table = self.class.schema.tables[self.class.table_name]
+        values = load_values
         response = client.load(table: table.name,
-                               values: [load_values],
+                               values: [values],
                                output_ids: "yes",
                                command_version: "3")
         unless response.success?
@@ -202,7 +203,7 @@ module GroongaClientModel
           raise RecordNotSaved.new(message, self)
         end
         if response.n_loaded_records.zero?
-          message = "Failed to save: #{self.inspect}"
+          message = "Failed to save: #{values.inspect}"
           raise RecordNotSaved.new(message, self)
         end
         if @new_record
