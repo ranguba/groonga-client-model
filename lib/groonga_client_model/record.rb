@@ -211,7 +211,7 @@ module GroongaClientModel
             if @attributes.key?("_key")
               key = _key
               if key.is_a?(String)
-                key = Groonga::Client::ScryptSyntax.format_string(key)
+                key = Groonga::Client::ScriptSyntax.format_string(key)
               end
               select_response = client.select(table: table.name,
                                               filter: "_key == #{key}",
