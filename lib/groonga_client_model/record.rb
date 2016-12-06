@@ -193,31 +193,37 @@ module GroongaClientModel
       Client.open do |client|
         table = self.class.schema.tables[self.class.table_name]
         response = client.load(table: table.name,
-                               values: [attributes])
+                               values: [attributes],
+                               output_ids: "yes",
+                               command_version: "3")
         unless response.success?
           message = "Failed to save: "
           message << "#{response.error_code}: #{response.error_message}"
           raise RecordNotSaved.new(message, self)
         end
-        if response.body.zero?
+        if response.n_loaded_records.zero?
           message = "Failed to save: #{self.inspect}"
           raise RecordNotSaved.new(message, self)
         end
         if @new_record
-          if @attributes.key?("_key")
-            select_response = client.select(table: table.name,
-                                            # TODO: #{_key} is dangerous
-                                            filter: "_key == #{_key}",
-                                            limit: 1,
-                                            output_columns: "_id")
-          else
-            select_response = client.select(table: table.name,
-                                            limit: 1,
-                                            output_columns: "_id",
-                                            # TODO: may return not newly added record
-                                            sort_keys: "-_id")
+          id = response.ids.first
+          if id.nil?
+            if @attributes.key?("_key")
+              select_response = client.select(table: table.name,
+                                              # TODO: #{_key} is dangerous
+                                              filter: "_key == #{_key}",
+                                              limit: 1,
+                                              output_columns: "_id")
+            else
+              select_response = client.select(table: table.name,
+                                              limit: 1,
+                                              output_columns: "_id",
+                                              # TODO: may return not newly added record
+                                              sort_keys: "-_id")
+            end
+            id = select_response.records.first["_id"]
           end
-          self._id = select_response.records.first["_id"]
+          self._id = id
         end
         @new_record = false
         true
