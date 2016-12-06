@@ -21,7 +21,7 @@ module GroongaClientModel
         response = client.schema
         unless response.success?
           message = "failed to retrieve schema: "
-          message << "#{response.error_code}:#{response.error_message}"
+          message << "#{response.return_code}:#{response.error_message}"
           raise Error, message
         end
         response

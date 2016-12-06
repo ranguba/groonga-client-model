@@ -140,7 +140,7 @@ module GroongaClientModel
                                    filter: "_id == #{_id}")
           unless response.success?
             message = "Failed to delete the record: "
-            message << "#{response.error_code}: #{response.error_message}"
+            message << "#{response.return_code}: #{response.error_message}"
             raise Error.new(message, self)
           end
         end
@@ -198,7 +198,7 @@ module GroongaClientModel
                                command_version: "3")
         unless response.success?
           message = "Failed to save: "
-          message << "#{response.error_code}: #{response.error_message}"
+          message << "#{response.return_code}: #{response.error_message}"
           raise RecordNotSaved.new(message, self)
         end
         if response.n_loaded_records.zero?
