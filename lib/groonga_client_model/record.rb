@@ -39,10 +39,8 @@ module GroongaClientModel
       def define_attributes
         return if defined?(@defined)
         @defined = true
-        columns.each do |name, column|
-          attribute_method_suffix "="
-          define_attribute_methods name
-        end
+        attribute_method_suffix("=")
+        define_attribute_methods(*columns.names)
       end
 
       def count
