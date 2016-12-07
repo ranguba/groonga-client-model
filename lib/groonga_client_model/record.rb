@@ -18,6 +18,7 @@ module GroongaClientModel
   class Record
     extend ActiveModel::Naming
     include ActiveModel::Validations
+    include ActiveModel::Conversion
     include ActiveModel::AttributeMethods
     include ActiveModel::AttributeAssignment
 
@@ -150,28 +151,8 @@ module GroongaClientModel
       save
     end
 
-    def to_model
-      self
-    end
-
     def id
       _id
-    end
-
-    def to_key
-      if persisted?
-        [id.to_s]
-      else
-        nil
-      end
-    end
-
-    def to_param
-      if persisted?
-        id.to_s
-      else
-        nil
-      end
     end
 
     def new_record?

@@ -15,20 +15,38 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 class TestRecord < Test::Unit::TestCase
-  class Memo < GroongaClientModel::Record
-    class << self
-      def columns
-        GroongaClientModel::Schema::Columns.new("_id" => {})
+  sub_test_case("ActiveModel") do
+    class EmptyModel < GroongaClientModel::Record
+      class << self
+        def columns
+          GroongaClientModel::Schema::Columns.new("_id" => {})
+        end
       end
+    end
+
+    include ActiveModel::Lint::Tests
+
+    setup do
+      @model = EmptyModel.new
     end
   end
 
-  setup do
-    @memo = Memo.new
-  end
+  sub_test_case("readers") do
+    class Memo < GroongaClientModel::Record
+      class << self
+        def columns
+          GroongaClientModel::Schema::Columns.new("_id" => {})
+        end
+      end
+    end
 
-  test "#id" do
-    @memo._id = 29
-    assert_equal(29, @memo.id)
+    setup do
+      @memo = Memo.new
+    end
+
+    test "#id" do
+      @memo._id = 29
+      assert_equal(29, @memo.id)
+    end
   end
 end
