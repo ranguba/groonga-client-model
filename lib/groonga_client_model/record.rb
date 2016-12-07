@@ -16,10 +16,10 @@
 
 module GroongaClientModel
   class Record
-    include ActiveModel::Validations
-    include ActiveModel::Conversion
-    include ActiveModel::AttributeMethods
     include ActiveModel::AttributeAssignment
+    include ActiveModel::AttributeMethods
+    include ActiveModel::Conversion
+    include ActiveModel::Validations
 
     class << self
       def schema
