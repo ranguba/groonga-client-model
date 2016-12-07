@@ -16,7 +16,6 @@
 
 module GroongaClientModel
   class Record
-    extend ActiveModel::Naming
     include ActiveModel::Validations
     include ActiveModel::Conversion
     include ActiveModel::AttributeMethods
