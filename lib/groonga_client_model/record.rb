@@ -154,9 +154,13 @@ module GroongaClientModel
       self
     end
 
+    def id
+      _id
+    end
+
     def to_key
       if persisted?
-        [_id.to_s]
+        [id.to_s]
       else
         nil
       end
@@ -164,7 +168,7 @@ module GroongaClientModel
 
     def to_param
       if persisted?
-        _id.to_s
+        id.to_s
       else
         nil
       end
