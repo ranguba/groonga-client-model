@@ -22,6 +22,7 @@ require "groonga_client_model/version"
 
 require "groonga_client_model/client"
 require "groonga_client_model/error"
+require "groonga_client_model/load_value_generator"
 require "groonga_client_model/record"
 require "groonga_client_model/schema"
 

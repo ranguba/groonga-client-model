@@ -14,30 +14,34 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-class RecordTest < Test::Unit::TestCase
-  sub_test_case("#load_values") do
-    class LoadValuesRecord < GroongaClientModel::Record
-      class << self
-        def columns
-          GroongaClientModel::Schema::Columns.new({"created_at" => {}})
-        end
+require "date"
+
+module GroongaClientModel
+  class LoadValueGenerator
+    def initialize(record)
+      @record = record
+    end
+
+    def generate
+      load_value = {}
+      @record.attributes.each do |name, value|
+        load_value[name] = format_value(value)
       end
+      load_value
     end
 
-    setup do
-      @record = LoadValuesRecord.new
-    end
-
-    def test_date
-      @record.created_at = Date.new(2016, 12, 6)
-      assert_equal({"created_at" => "2016-12-06 00:00:00"},
-                   @record.__send__(:load_values))
-    end
-
-    def test_time
-      @record.created_at = Time.local(2016, 12, 6, 18, 41, 24, 195422)
-      assert_equal({"created_at" => "2016-12-06 18:41:24.195422"},
-                   @record.__send__(:load_values))
+    private
+    def format_value(value)
+      case value
+      when Date
+        value.strftime("%Y-%m-%d 00:00:00")
+      when Time
+        value.strftime("%Y-%m-%d %H:%M:%S.%6N")
+      when Record
+        format_value(value._key)
+      else
+        value = value
+      end
     end
   end
 end

@@ -14,8 +14,6 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-require "date"
-
 module GroongaClientModel
   class Record
     extend ActiveModel::Naming
@@ -190,9 +188,10 @@ module GroongaClientModel
     def upsert
       Client.open do |client|
         table = self.class.schema.tables[self.class.table_name]
-        values = load_values
+        load_value_generator = LoadValueGenerator.new(self)
+        value = load_value_generator.generate
         response = client.load(table: table.name,
-                               values: [values],
+                               values: [value],
                                output_ids: "yes",
                                command_version: "3")
         unless response.success?
@@ -201,7 +200,7 @@ module GroongaClientModel
           raise RecordNotSaved.new(message, self)
         end
         if response.n_loaded_records.zero?
-          message = "Failed to save: #{values.inspect}"
+          message = "Failed to save: #{value.inspect}"
           raise RecordNotSaved.new(message, self)
         end
         if @new_record
@@ -230,22 +229,6 @@ module GroongaClientModel
         @new_record = false
         true
       end
-    end
-
-    def load_values
-      values = {}
-      @attributes.each do |name, value|
-        case value
-        when Date
-          value = value.strftime("%Y-%m-%d 00:00:00")
-        when Time
-          value = value.strftime("%Y-%m-%d %H:%M:%S.%6N")
-        else
-          value = value
-        end
-        values[name] = value
-      end
-      values
     end
   end
 end
