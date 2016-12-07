@@ -39,8 +39,12 @@ module GroongaClientModel
         value.strftime("%Y-%m-%d %H:%M:%S.%6N")
       when Record
         format_value(value._key)
+      when Array
+        value.collect do |sub_value|
+          format_value(sub_value)
+        end
       else
-        value = value
+        value
       end
     end
   end
