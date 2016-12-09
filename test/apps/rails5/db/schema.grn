@@ -2,3 +2,8 @@ table_create posts TABLE_NO_KEY
 
 column_create posts title COLUMN_SCALAR ShortText
 column_create posts body COLUMN_SCALAR Text
+
+table_create terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizer NormalizerAuto
+column_create terms posts_body COLUMN_INDEX|WITH_POSITION posts body
