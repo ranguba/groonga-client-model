@@ -188,7 +188,7 @@ module GroongaClientModel
           raise RecordNotSaved.new(message, self)
         end
         if @new_record
-          id = response.ids.first
+          id = response.loaded_ids.first
           if id.nil?
             if @attributes.key?("_key")
               key = _key
