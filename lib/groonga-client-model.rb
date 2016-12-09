@@ -31,3 +31,7 @@ module GroongaClientModel
 end
 
 ActiveSupport.run_load_hooks(:groonga_client_model, GroongaClientModel)
+
+if defined?(Rails)
+  require "groonga_client_model/railtie"
+end
