@@ -14,25 +14,11 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-require "active_model"
-
-require "groonga/client"
-
-require "groonga_client_model/version"
-
-require "groonga_client_model/client"
-require "groonga_client_model/client_opener"
-require "groonga_client_model/error"
-require "groonga_client_model/load_value_generator"
-require "groonga_client_model/record"
-require "groonga_client_model/schema"
-
 module GroongaClientModel
-  mattr_accessor :logger, instance_writer: false
-end
-
-ActiveSupport.run_load_hooks(:groonga_client_model, GroongaClientModel)
-
-if defined?(Rails)
-  require "groonga_client_model/railtie"
+  module ClientOpener
+    private
+    def open_client(&block)
+      Client.open(&block)
+    end
+  end
 end

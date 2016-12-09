@@ -84,6 +84,18 @@ module GroongaClientModel
         all.last
       end
 
+      def select
+        full_text_searchable_column_names = []
+        columns.each do |name, column|
+          if column.have_full_text_search_index?
+            full_text_searchable_column_names << name
+          end
+        end
+        Groonga::Client::Request::Select.new(table_name).
+          extend(ClientOpener).
+          match_columns(full_text_searchable_column_names)
+      end
+
       private
       def define_method_attribute(name)
         define_method(name) do
