@@ -42,46 +42,27 @@ module GroongaClientModel
       end
 
       def count
-        Client.open do |client|
-          table = schema.tables[table_name]
-          response = client.select(table: table.name,
-                                   limit: 0,
-                                   output_columns: ["_id"])
-          response.n_hits
-        end
+        select.limit(0).output_columns("_id").response.n_hits
       end
 
       def all
-        Client.open do |client|
-          table = schema.tables[table_name]
-          response = client.select(table: table.name,
-                                   limit: -1)
-          response.records.collect do |attributes|
-            record = new(attributes)
-            record.instance_variable_set(:@new_record, false)
-            record
-          end
-        end
+        select.limit(-1)
       end
 
       def find(id)
-        Client.open do |client|
-          table = schema.tables[table_name]
-          response = client.select(table: table.name,
-                                   filter: "_id == #{id}",
-                                   limit: 1)
-          attributes = response.records.first
-          if attributes.nil?
-            raise RecordNotFound.new("Record not found: _id: <#{id}>")
-          end
-          record = new(attributes)
-          record.instance_variable_set(:@new_record, false)
-          record
+        record = select.filter("_id == %{id}", id: id).limit(1).first
+        if record.nil?
+          raise RecordNotFound.new("Record not found: _id: <#{id}>")
         end
+        record
+      end
+
+      def first
+        select.sort_keys("_id").limit(1).first
       end
 
       def last
-        all.last
+        select.sort_keys("-_id").limit(1).first
       end
 
       def select
@@ -91,8 +72,18 @@ module GroongaClientModel
             full_text_searchable_column_names << name
           end
         end
-        Groonga::Client::Request::Select.new(table_name).
-          extend(ClientOpener).
+        model_class = self
+        model_class_module = Module.new do
+          define_method :model_class do
+            model_class
+          end
+        end
+        extensions = [
+          ClientOpener,
+          Modelizable,
+          model_class_module,
+        ]
+        Groonga::Client::Request::Select.new(table_name, extensions).
           match_columns(full_text_searchable_column_names)
       end
 
@@ -202,23 +193,15 @@ module GroongaClientModel
         if @new_record
           id = response.loaded_ids.first
           if id.nil?
+            select_request = self.class.select.limit(1).output_columns("_id")
             if @attributes.key?("_key")
-              key = _key
-              if key.is_a?(String)
-                key = Groonga::Client::ScriptSyntax.format_string(key)
-              end
-              select_response = client.select(table: table.name,
-                                              filter: "_key == #{key}",
-                                              limit: 1,
-                                              output_columns: "_id")
+              select_request = select_request.filter("_key == %{key}",
+                                                     key: _key)
             else
-              select_response = client.select(table: table.name,
-                                              limit: 1,
-                                              output_columns: "_id",
-                                              # TODO: may return not newly added record
-                                              sort_keys: "-_id")
+              # TODO: may return not newly added record
+              select_request = select_request.sort_keys("-_id")
             end
-            id = select_response.records.first["_id"]
+            id = select_request.first._id
           end
           self._id = id
         end
