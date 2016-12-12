@@ -14,39 +14,14 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-class TestRecord < Test::Unit::TestCase
-  sub_test_case("ActiveModel") do
-    class EmptyModel < GroongaClientModel::Record
-      class << self
-        def columns
-          GroongaClientModel::Schema::Columns.new(nil, "_id" => {})
-        end
-      end
-    end
+require "groonga/client/spec-helper"
 
-    include ActiveModel::Lint::Tests
+module GroongaClientModel
+  module SpecHelper
+    extend ActiveSupport::Concern
 
-    setup do
-      @model = EmptyModel.new
-    end
-  end
-
-  sub_test_case("readers") do
-    class Memo < GroongaClientModel::Record
-      class << self
-        def columns
-          GroongaClientModel::Schema::Columns.new(nil, "_id" => {})
-        end
-      end
-    end
-
-    setup do
-      @memo = Memo.new
-    end
-
-    test "#id" do
-      @memo._id = 29
-      assert_equal(29, @memo.id)
+    included do
+      include Groonga::Client::SpecHelper
     end
   end
 end

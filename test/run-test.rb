@@ -34,8 +34,10 @@ Dir.glob("#{__dir__}/apps/*") do |test_application|
     RbConfig.ruby,
     "bin/rails",
     "test",
-    "TESTOPTS=#{ARGV.join(' ')}",
   ]
+  unless ARGV.empty?
+    command_line << "TESTOPTS=#{ARGV.join(' ')}"
+  end
   options = {
     :chdir => test_application,
   }

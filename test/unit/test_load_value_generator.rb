@@ -18,7 +18,8 @@ class TestLoadValueGenerator < Test::Unit::TestCase
   class Memo < GroongaClientModel::Record
     class << self
       def columns
-        GroongaClientModel::Schema::Columns.new("tag" => {},
+        GroongaClientModel::Schema::Columns.new(nil,
+                                                "tag" => {},
                                                 "tags" => {},
                                                 "created_at" => {})
       end
@@ -28,7 +29,8 @@ class TestLoadValueGenerator < Test::Unit::TestCase
   class Tag < GroongaClientModel::Record
     class << self
       def columns
-        GroongaClientModel::Schema::Columns.new("_key" => {})
+        GroongaClientModel::Schema::Columns.new(nil,
+                                                "_key" => {})
       end
     end
   end

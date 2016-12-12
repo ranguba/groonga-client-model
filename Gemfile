@@ -19,3 +19,5 @@
 source "https://rubygems.org/"
 
 gemspec
+
+gem "groonga-client", path: "../groonga-client"

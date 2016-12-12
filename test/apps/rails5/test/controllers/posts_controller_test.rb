@@ -1,6 +1,8 @@
 require 'test_helper'
 
 class PostsControllerTest < ActionDispatch::IntegrationTest
+  include GroongaClientModel::TestHelper
+
   setup do
     @post = create(:post)
   end
