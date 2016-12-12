@@ -19,9 +19,14 @@ module GroongaClientModel
     include ActiveModel::AttributeAssignment
     include ActiveModel::AttributeMethods
     include ActiveModel::Conversion
+    include ActiveModel::Translation
     include ActiveModel::Validations
 
     class << self
+      def i18n_scope
+        :groonga_client_model
+      end
+
       def schema
         @@schema ||= Schema.new
       end
