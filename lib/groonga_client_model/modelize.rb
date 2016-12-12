@@ -20,6 +20,17 @@ module GroongaClientModel
       @model_class = model_class
     end
 
+    # For Kaminari
+    def entry_name(options={})
+      model_name = @model_class.model_name
+      if options[:count] == 1
+        default = model_name.human
+      else
+        default = model_name.human.pluralize
+      end
+      model_name.human(options.reverse_merge(default: default))
+    end
+
     def records
       @modelized_records ||= super.collect do |raw_record|
         record = @model_class.new(raw_record)
