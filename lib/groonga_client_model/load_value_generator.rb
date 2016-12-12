@@ -27,6 +27,9 @@ module GroongaClientModel
       @record.attributes.each do |name, value|
         load_value[name] = format_value(value)
       end
+      if load_value.key?("_id") and load_value.key?("_key")
+        load_value.delete("_id")
+      end
       load_value
     end
 

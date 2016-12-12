@@ -30,6 +30,7 @@ class TestLoadValueGenerator < Test::Unit::TestCase
     class << self
       def columns
         GroongaClientModel::Schema::Columns.new(nil,
+                                                "_id" => {},
                                                 "_key" => {})
       end
     end
@@ -67,5 +68,12 @@ class TestLoadValueGenerator < Test::Unit::TestCase
     @memo.tags = tags
     assert_equal({"tags" => ["important", "groonga"]},
                  @generator.generate)
+  end
+
+  test "_id and _key" do
+    tag = Tag.new(_id: 10, _key: "important")
+    generator = GroongaClientModel::LoadValueGenerator.new(tag)
+    assert_equal({"_key" => "important"},
+                 generator.generate)
   end
 end
