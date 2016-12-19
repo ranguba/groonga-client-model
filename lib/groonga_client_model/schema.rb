@@ -95,6 +95,10 @@ module GroongaClientModel
         @raw_columns.keys
       end
 
+      def [](name)
+        @raw_columns[name]
+      end
+
       def each
         @raw_columns.each do |name, column|
           yield(name, column)
