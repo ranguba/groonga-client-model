@@ -41,7 +41,6 @@ module GroongaClientModel
       raw_records.collect do |raw_record|
         attributes, dynamic_attributes = build_attributes(columns, raw_record)
         record = @model_class.new(attributes)
-        record.instance_variable_set(:@new_record, false)
         record.assign_dynamic_attributes(dynamic_attributes)
         record
       end

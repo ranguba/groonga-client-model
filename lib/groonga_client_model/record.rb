@@ -19,6 +19,7 @@ module GroongaClientModel
     include ActiveModel::AttributeAssignment
     include ActiveModel::AttributeMethods
     include ActiveModel::Conversion
+    include ActiveModel::Dirty
     include ActiveModel::Translation
     include ActiveModel::Validations
 
@@ -104,6 +105,9 @@ module GroongaClientModel
           if value.is_a?(Hash)
             value = build_sub_record(name, value)
           end
+          unless @attributes[name] == value
+            attribute_will_change!(name)
+          end
           @attributes[name] = value
         end
       end
@@ -116,7 +120,12 @@ module GroongaClientModel
       self.class.define_attributes
       assign_attributes(attributes) if attributes
 
-      @new_record = true
+      if @attributes["_id"]
+        @new_record = false
+        clear_changes_information
+      else
+        @new_record = true
+      end
       @destroyed = false
     end
 
@@ -198,6 +207,11 @@ module GroongaClientModel
 
     private
     def upsert
+      attributes.each do |name, value|
+        if value.is_a?(Record) and value.changed?
+          value.save
+        end
+      end
       Client.open do |client|
         table = self.class.schema.tables[self.class.table_name]
         load_value_generator = LoadValueGenerator.new(self)
@@ -231,6 +245,7 @@ module GroongaClientModel
           self._id = id
         end
         @new_record = false
+        changes_applied
         true
       end
     end
