@@ -192,7 +192,7 @@ module GroongaClientModel
     end
 
     private
-    def save_raw
+    def save_raw(validate:)
       if validate
         if valid?
           upsert
