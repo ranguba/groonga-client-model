@@ -18,6 +18,7 @@ module GroongaClientModel
   class Record
     include ActiveModel::AttributeAssignment
     include ActiveModel::AttributeMethods
+    include ActiveModel::Callbacks
     include ActiveModel::Conversion
     include ActiveModel::Dirty
     include ActiveModel::Translation
@@ -113,6 +114,8 @@ module GroongaClientModel
       end
     end
 
+    define_model_callbacks :save, :create, :update, :destroy
+
     attr_reader :attributes
 
     def initialize(attributes=nil)
@@ -130,14 +133,8 @@ module GroongaClientModel
     end
 
     def save(validate: false)
-      if validate
-        if valid?
-          upsert
-        else
-          false
-        end
-      else
-        upsert
+      run_callbacks(:save) do
+        save_raw(validate: validate)
       end
     end
 
@@ -149,20 +146,9 @@ module GroongaClientModel
     end
 
     def destroy
-      if persisted?
-        Client.open do |client|
-          table = self.class.schema.tables[self.class.table_name]
-          response = client.delete(table: table.name,
-                                   filter: "_id == #{_id}")
-          unless response.success?
-            message = "Failed to delete the record: "
-            message << "#{response.return_code}: #{response.error_message}"
-            raise Error.new(message, self)
-          end
-        end
+      run_callbacks(:destroy) do
+        destroy_raw
       end
-      @destroyed = true
-      freeze
     end
 
     def update(attributes)
@@ -206,7 +192,48 @@ module GroongaClientModel
     end
 
     private
+    def save_raw
+      if validate
+        if valid?
+          upsert
+        else
+          false
+        end
+      else
+        upsert
+      end
+    end
+
+    def destroy_raw
+      if persisted?
+        Client.open do |client|
+          table = self.class.schema.tables[self.class.table_name]
+          response = client.delete(table: table.name,
+                                   filter: "_id == #{_id}")
+          unless response.success?
+            message = "Failed to delete the record: "
+            message << "#{response.return_code}: #{response.error_message}"
+            raise Error.new(message, self)
+          end
+        end
+      end
+      @destroyed = true
+      freeze
+    end
+
     def upsert
+      if new_record?
+        run_callbacks(:create) do
+          upsert_raw
+        end
+      else
+        run_callbacks(:update) do
+          upsert_raw
+        end
+      end
+    end
+
+    def upsert_raw
       attributes.each do |name, value|
         if value.is_a?(Record) and value.changed?
           value.save
