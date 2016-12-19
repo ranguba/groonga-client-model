@@ -176,6 +176,23 @@ module GroongaClientModel
       true
     end
 
+    def assign_dynamic_attributes(dynamic_attributes)
+      return if dynamic_attributes.blank?
+
+      dynamic_attributes.each do |name, value|
+        assign_dynamic_attribute(name, value)
+      end
+    end
+
+    def assign_dynamic_attribute(name, value)
+      if respond_to?(name)
+        singleton_class.__send__(:undef_method, name)
+      end
+      singleton_class.__send__(:define_method, name) do
+        value
+      end
+    end
+
     private
     def upsert
       Client.open do |client|

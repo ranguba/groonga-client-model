@@ -1,7 +1,7 @@
 PATH
   remote: ../../../../groonga-client
   specs:
-    groonga-client (0.3.4)
+    groonga-client (0.3.5)
       gqtp (>= 1.0.4)
       groonga-command (>= 1.2.8)
       hashie

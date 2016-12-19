@@ -32,11 +32,53 @@ module GroongaClientModel
     end
 
     def records
-      @modelized_records ||= super.collect do |raw_record|
-        record = @model_class.new(raw_record)
+      @modelized_records ||= build_records(super)
+    end
+
+    private
+    def build_records(raw_records)
+      columns = @model_class.columns
+      raw_records.collect do |raw_record|
+        attributes, dynamic_attributes = build_attributes(columns, raw_record)
+        record = @model_class.new(attributes)
         record.instance_variable_set(:@new_record, false)
+        record.assign_dynamic_attributes(dynamic_attributes)
         record
       end
+    end
+
+    def build_attributes(columns, raw_record)
+      attributes = {}
+      dynamic_attributes = {}
+      raw_record.each do |name, value|
+        primary_name, sub_name = name.split(".", 2)
+        if sub_name.nil?
+          if columns.exist?(primary_name)
+            if attributes.key?(primary_name)
+              value = attributes[primary_name].merge("_key" => value)
+            end
+            attributes[primary_name] = value
+          else
+            dynamic_attributes[primary_name] = value
+          end
+        else
+          if columns.exist?(primary_name)
+            if attributes.key?(primary_name)
+              unless attributes[primary_name].is_a?(Hash)
+                attributes[primary_name] = {
+                  "_key" => attributes[primary_name],
+                }
+              end
+            else
+              attributes[primary_name] = {}
+            end
+            attributes[primary_name][sub_name] = value
+          else
+            dynamic_attributes[name] = value
+          end
+        end
+      end
+      [attributes, dynamic_attributes]
     end
   end
 end

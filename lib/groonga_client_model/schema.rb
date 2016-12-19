@@ -87,6 +87,10 @@ module GroongaClientModel
         @raw_columns = raw_columns
       end
 
+      def exist?(name)
+        @raw_columns.key?(name)
+      end
+
       def names
         @raw_columns.keys
       end
