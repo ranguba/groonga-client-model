@@ -101,6 +101,9 @@ module GroongaClientModel
 
       def define_method_attribute=(name)
         define_method("#{name}=") do |value|
+          if value.is_a?(Hash)
+            value = build_sub_record(name, value)
+          end
           @attributes[name] = value
         end
       end
@@ -229,6 +232,36 @@ module GroongaClientModel
         end
         @new_record = false
         true
+      end
+    end
+
+    def build_sub_record(name, value)
+      column = self.class.columns[name]
+      return value unless column
+
+      return value unless column.value_type.type == "reference"
+
+      class_name = name.classify
+      begin
+        sub_record_class = class_name.constantize
+      rescue NameError
+        return value
+      end
+
+      is_vector = (column.type == "vector")
+      if is_vector
+        sub_record_values = []
+        value.each do |sub_name, sub_values|
+          sub_values.each_with_index do |sub_value, i|
+            sub_record_value = (sub_record_values[i] ||= {})
+            sub_record_value[sub_name] = sub_value
+          end
+        end
+        sub_record_values.collect do |sub_record_value|
+          sub_record_class.new(sub_record_value)
+        end
+      else
+        sub_record_class.new(value)
       end
     end
   end
