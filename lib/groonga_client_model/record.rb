@@ -261,6 +261,7 @@ module GroongaClientModel
           sub_record_class.new(sub_record_value)
         end
       else
+        return nil if value["_key"].blank?
         sub_record_class.new(value)
       end
     end
