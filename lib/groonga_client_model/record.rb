@@ -234,11 +234,7 @@ module GroongaClientModel
     end
 
     def upsert_raw
-      attributes.each do |name, value|
-        if value.is_a?(Record) and value.changed?
-          value.save
-        end
-      end
+      upsert_sub_records
       Client.open do |client|
         table = self.class.schema.tables[self.class.table_name]
         load_value_generator = LoadValueGenerator.new(self)
@@ -274,6 +270,23 @@ module GroongaClientModel
         @new_record = false
         changes_applied
         true
+      end
+    end
+
+    def upsert_sub_records
+      attributes.each do |name, value|
+        upsert_sub_record(value)
+      end
+    end
+
+    def upsert_sub_record(sub_record)
+      case sub_record
+      when Record
+        sub_record.save if sub_record.changed?
+      when Array
+        sub_record.each do |sub_element|
+          upsert_sub_record(sub_element)
+        end
       end
     end
 
