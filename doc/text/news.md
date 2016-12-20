@@ -1,5 +1,15 @@
 # NEWS
 
+## 0.9.2 - 2016-12-20
+
+### Improvements
+
+  * Supported loading `db/schema.grn` on test.
+
+### Fixes
+
+  * Added missing `*.rake` files.
+
 ## 0.9.1 - 2016-12-19
 
 ### Fixes
