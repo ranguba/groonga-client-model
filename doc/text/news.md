@@ -1,5 +1,11 @@
 # NEWS
 
+## 0.9.3 - 2016-12-20
+
+### Improvements
+
+  * Supported using `config/groonga.yml` for test fixture.
+
 ## 0.9.2 - 2016-12-20
 
 ### Improvements
