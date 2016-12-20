@@ -14,7 +14,6 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-require "groonga/client/spec-helper"
 require "groonga_client_model/test/fixture"
 
 module GroongaClientModel
@@ -22,11 +21,14 @@ module GroongaClientModel
     extend ActiveSupport::Concern
 
     included do
-      include Groonga::Client::SpecHelper
       include Test::Fixture
 
       before(:each) do
-        setup_groonga_schema
+        setup_groonga
+      end
+
+      after(:each) do
+        teardown_groonga
       end
     end
   end

@@ -14,21 +14,39 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-require "groonga_client_model/test/fixture"
+require "pathname"
+require "uri"
+
+require "groonga/client/test/groonga-server-runner"
 
 module GroongaClientModel
-  module TestHelper
-    include Test::Fixture
-
-    extend ActiveSupport::Concern
-
-    included do
-      setup do
-        setup_groonga
+  module Test
+    class GroongaServerRunner < Groonga::Client::Test::GroongaServerRunner
+      def initialize
+        super
+        @client = Client.new
       end
 
-      teardown do
-        teardown_groonga
+      def run
+        super
+        return if using_running_server?
+
+        if defined?(Rails)
+          base_dir = Rails.root
+        else
+          base_dir = Pathname.pwd
+        end
+        schema_loader = SchemaLoader.new(base_dir)
+        schema_loader.load
+      end
+
+      def url
+        @url ||= URI(@client.url)
+      end
+
+      private
+      def open_client(&block)
+        @client.open(&block)
       end
     end
   end

@@ -14,19 +14,19 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+require "groonga_client_model/test/groonga_server_runner"
+
 module GroongaClientModel
   module Test
     module Fixture
-      def setup_groonga_schema
-        return if @groonga_server_runner.using_running_server?
+      def setup_groonga
+        @groonga_server_runner = GroongaServerRunner.new
+        @groonga_server_runner.run
+      end
 
-        if defined?(Rails)
-          base_dir = Rails.root
-        else
-          base_dir = Pathname.pwd
-        end
-        schema_loader = SchemaLoader.new(base_dir)
-        schema_loader.load
+      def teardown_groonga
+        return if @groonga_server_runner.nil?
+        @groonga_server_runner.stop
       end
     end
   end

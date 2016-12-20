@@ -24,6 +24,7 @@ module GroongaClientModel
       end
     end
 
+    attr_reader :url
     def initialize(url=nil)
       @url = url || self.class.url || "http://127.0.0.1:10041"
     end
