@@ -7,9 +7,8 @@ rvm:
   - 2.3.3
 before_install:
   - curl --silent --location https://github.com/groonga/groonga/raw/master/data/travis/setup.sh | sh
-  - sudo apt-get -qq -y install groonga-bin groonga-httpd groonga-tokenizer-mecab
+  - sudo apt-get -qq -y install groonga-bin
   - gem update bundler
-  - git clone --depth 1 https://github.com/ranguba/groonga-client.git ../groonga-client
 install:
   - bundle install --jobs=3 --retry=3
   - |
@@ -24,5 +23,5 @@ script:
     for test_app in ${PWD}/test/apps/*
     do
       (cd ${test_app} && \
-        BUNDLE_GEMFILE=${PWD}/Gemfile bin/rails groonga:schema:load test)
+        BUNDLE_GEMFILE=${PWD}/Gemfile bin/rails test)
     done
