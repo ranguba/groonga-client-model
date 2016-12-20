@@ -22,6 +22,31 @@ module GroongaClientModel
 
     included do
       include Groonga::Client::TestHelper
+
+      setup do
+        return if @groonga_server_runner.using_running_server?
+
+        if defined?(Rails)
+          base_dir = Rails.root
+        else
+          base_dir = Pathname.pwd
+        end
+        schema_grn = base_dir + "db" + "schema.grn"
+        return unless schema_grn.exist?
+
+        Client.open do |client|
+          parser = Groonga::Command::Parser.new
+          parser.on_command do |command|
+            client.execute(command)
+          end
+          schema_grn.open do |schema|
+            schema.each_line do |line|
+              parser << line
+            end
+          end
+          parser.finish
+        end
+      end
     end
   end
 end
