@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 require "groonga/client/test-helper"
+require "groonga_client_model/test/fixture"
 
 module GroongaClientModel
   module TestHelper
@@ -22,30 +23,10 @@ module GroongaClientModel
 
     included do
       include Groonga::Client::TestHelper
+      include Test::Fixture
 
       setup do
-        return if @groonga_server_runner.using_running_server?
-
-        if defined?(Rails)
-          base_dir = Rails.root
-        else
-          base_dir = Pathname.pwd
-        end
-        schema_grn = base_dir + "db" + "schema.grn"
-        return unless schema_grn.exist?
-
-        Client.open do |client|
-          parser = Groonga::Command::Parser.new
-          parser.on_command do |command|
-            client.execute(command)
-          end
-          schema_grn.open do |schema|
-            schema.each_line do |line|
-              parser << line
-            end
-          end
-          parser.finish
-        end
+        setup_groonga_schema
       end
     end
   end

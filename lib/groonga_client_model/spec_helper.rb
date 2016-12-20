@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 require "groonga/client/spec-helper"
+require "groonga_client_model/test/fixture"
 
 module GroongaClientModel
   module SpecHelper
@@ -22,6 +23,11 @@ module GroongaClientModel
 
     included do
       include Groonga::Client::SpecHelper
+      include Test::Fixture
+
+      before(:each) do
+        setup_groonga_schema
+      end
     end
   end
 end

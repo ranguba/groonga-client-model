@@ -1,5 +1,3 @@
-# -*- ruby -*-
-#
 # Copyright (C) 2016  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
@@ -16,20 +14,20 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-namespace :groonga do
-  namespace :config do
-    desc "Load config/groonga.rb"
-    task load: [:environment] do
-      config = Rails.application.config_for(:groonga)
-      GroongaClientModel::Client.url = config["url"]
-    end
-  end
+module GroongaClientModel
+  module Test
+    module Fixture
+      def setup_groonga_schema
+        return if @groonga_server_runner.using_running_server?
 
-  namespace :schema do
-    desc "Loads config/schema.grn info Groonga"
-    task load: ["config:load"] do
-      schema_loader = GroongaClientModel::SchemaLoader.new(Rails.root)
-      schema_loader.load
+        if defined?(Rails)
+          base_dir = Rails.root
+        else
+          base_dir = Pathname.pwd
+        end
+        schema_loader = SchemaLoader.new(base_dir)
+        schema_loader.load
+      end
     end
   end
 end

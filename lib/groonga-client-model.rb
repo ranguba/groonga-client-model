@@ -28,6 +28,7 @@ require "groonga_client_model/modelizable"
 require "groonga_client_model/modelize"
 require "groonga_client_model/record"
 require "groonga_client_model/schema"
+require "groonga_client_model/schema_loader"
 
 module GroongaClientModel
   mattr_accessor :logger, instance_writer: false
