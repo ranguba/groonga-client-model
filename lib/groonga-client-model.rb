@@ -31,6 +31,8 @@ require "groonga_client_model/schema"
 require "groonga_client_model/schema_loader"
 
 module GroongaClientModel
+  extend ActiveSupport::Autoload
+
   mattr_accessor :logger, instance_writer: false
 end
 
