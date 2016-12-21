@@ -1,5 +1,11 @@
 # NEWS
 
+## 0.9.4 - 2016-12-21
+
+### Improvements
+
+  * Supported `eager_load!`.
+
 ## 0.9.3 - 2016-12-20
 
 ### Improvements
