@@ -138,13 +138,13 @@ module GroongaClientModel
       @destroyed = false
     end
 
-    def save(validate: false)
+    def save(validate: true)
       run_callbacks(:save) do
         save_raw(validate: validate)
       end
     end
 
-    def save!(validate: false)
+    def save!(validate: true)
       unless save(validate: validate)
         message = "Failed to save the record"
         raise RecordNotSaved.new(message, self)
