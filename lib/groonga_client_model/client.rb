@@ -16,7 +16,7 @@
 
 module GroongaClientModel
   class Client
-    class_attribute :url
+    class_attribute :url, instance_accessor: false
 
     class << self
       def open(&block)
