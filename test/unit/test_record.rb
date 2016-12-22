@@ -49,4 +49,41 @@ class TestRecord < Test::Unit::TestCase
       assert_equal(29, @memo.id)
     end
   end
+
+  sub_test_case("validations") do
+    sub_test_case("_key presence") do
+      class NoKey < GroongaClientModel::Record
+        class << self
+          def columns
+            GroongaClientModel::Schema::Columns.new(nil, "_id" => {})
+          end
+        end
+      end
+
+      class HaveKey < GroongaClientModel::Record
+        class << self
+          def columns
+            GroongaClientModel::Schema::Columns.new(nil,
+                                                    "_id" => {},
+                                                    "_key" => {})
+          end
+        end
+      end
+
+      test "no key" do
+        record = NoKey.new
+        record.validate
+        assert_equal({}, record.errors.messages)
+      end
+
+      test "have key" do
+        record = HaveKey.new
+        record.validate
+        assert_equal({
+                       :_key => [record.errors.generate_message(:_key, :blank)],
+                     },
+                     record.errors.messages)
+      end
+    end
+  end
 end

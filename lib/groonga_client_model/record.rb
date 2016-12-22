@@ -41,6 +41,10 @@ module GroongaClientModel
         schema.tables[table_name].columns
       end
 
+      def have_key?
+        columns.exist?("_key")
+      end
+
       def define_attributes
         return if defined?(@defined)
         @defined = true
@@ -117,6 +121,8 @@ module GroongaClientModel
     define_model_callbacks :save, :create, :update, :destroy
 
     attr_reader :attributes
+
+    validates :_key, presence: true, if: ->(record) {record.class.have_key?}
 
     def initialize(attributes=nil)
       @attributes = {}
