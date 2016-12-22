@@ -302,6 +302,8 @@ module GroongaClientModel
           end
         end
         true
+      else
+        true
       end
     end
 
