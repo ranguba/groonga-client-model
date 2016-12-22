@@ -201,12 +201,12 @@ module GroongaClientModel
     def save_raw(validate:)
       if validate
         if valid?
-          upsert
+          upsert(validate: true)
         else
           false
         end
       else
-        upsert
+        upsert(validate: false)
       end
     end
 
@@ -227,20 +227,21 @@ module GroongaClientModel
       freeze
     end
 
-    def upsert
+    def upsert(validate:)
       if new_record?
         run_callbacks(:create) do
-          upsert_raw
+          upsert_raw(validate: validate)
         end
       else
         run_callbacks(:update) do
-          upsert_raw
+          upsert_raw(validate: validate)
         end
       end
     end
 
-    def upsert_raw
-      upsert_sub_records
+    def upsert_raw(validate:)
+      return false unless upsert_sub_records(validate: validate)
+
       Client.open do |client|
         table = self.class.schema.tables[self.class.table_name]
         load_value_generator = LoadValueGenerator.new(self)
@@ -279,20 +280,28 @@ module GroongaClientModel
       end
     end
 
-    def upsert_sub_records
+    def upsert_sub_records(validate:)
       attributes.each do |name, value|
-        upsert_sub_record(value)
+        return false unless upsert_sub_record(value, validate)
       end
+      true
     end
 
-    def upsert_sub_record(sub_record)
+    def upsert_sub_record(sub_record, validate)
       case sub_record
       when Record
-        sub_record.save if sub_record.changed?
+        if sub_record.changed?
+          sub_record.save(validate: validate)
+        else
+          true
+        end
       when Array
         sub_record.each do |sub_element|
-          upsert_sub_record(sub_element)
+          unless upsert_sub_record(sub_element, validate)
+            return false
+          end
         end
+        true
       end
     end
 

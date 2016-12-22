@@ -72,13 +72,17 @@ class TestRecord < Test::Unit::TestCase
 
       test "no key" do
         record = NoKey.new
-        record.validate
+        assert do
+          record.valid?
+        end
         assert_equal({}, record.errors.messages)
       end
 
       test "have key" do
         record = HaveKey.new
-        record.validate
+        assert do
+          not record.save
+        end
         assert_equal({
                        :_key => [record.errors.generate_message(:_key, :blank)],
                      },
