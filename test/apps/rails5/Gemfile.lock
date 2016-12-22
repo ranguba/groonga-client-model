@@ -1,7 +1,7 @@
 PATH
   remote: ../../../../groonga-client
   specs:
-    groonga-client (0.3.7)
+    groonga-client (0.4.0)
       gqtp (>= 1.0.4)
       groonga-command (>= 1.2.8)
       groonga-command-parser (>= 1.0.7)
@@ -10,9 +10,9 @@ PATH
 PATH
   remote: ../../../
   specs:
-    groonga-client-model (0.9.3)
+    groonga-client-model (0.9.5)
       activemodel
-      groonga-client (>= 0.3.6)
+      groonga-client (>= 0.3.7)
       groonga-command-parser
 
 GEM
