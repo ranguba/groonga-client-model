@@ -16,7 +16,7 @@
 
 module GroongaClientModel
   class Record
-    include ActiveModel::AttributeAssignment
+    include AttributeAssignment
     include ActiveModel::AttributeMethods
     include ActiveModel::Callbacks
     include ActiveModel::Conversion

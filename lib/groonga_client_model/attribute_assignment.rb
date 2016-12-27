@@ -14,31 +14,21 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-require "active_model"
-
-require "groonga/client"
-
-require "groonga_client_model/version"
-
-require "groonga_client_model/attribute_assignment"
-require "groonga_client_model/client"
-require "groonga_client_model/client_opener"
-require "groonga_client_model/error"
-require "groonga_client_model/load_value_generator"
-require "groonga_client_model/modelizable"
-require "groonga_client_model/modelize"
-require "groonga_client_model/record"
-require "groonga_client_model/schema"
-require "groonga_client_model/schema_loader"
-
 module GroongaClientModel
-  extend ActiveSupport::Autoload
-
-  mattr_accessor :logger, instance_writer: false
-end
-
-ActiveSupport.run_load_hooks(:groonga_client_model, GroongaClientModel)
-
-if defined?(Rails)
-  require "groonga_client_model/railtie"
+  module AttributeAssignment
+    if ActiveModel.const_defined?(:AttributeAssignment)
+      include ActiveModel::AttributeAssignment
+    else
+      def assign_attributes(attributes)
+        attributes.each do |name, value|
+          setter = "#{name}="
+          if respond_to?(setter)
+            public_send(setter, value)
+          else
+            raise NoMethodError, "unknown attribute: #{name}: #{self.class}"
+          end
+        end
+      end
+    end
+  end
 end
