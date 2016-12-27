@@ -315,7 +315,11 @@ module GroongaClientModel
 
       class_name = name.classify
       begin
-        sub_record_class = class_name.constantize
+        if self.class.const_defined?(class_name)
+          sub_record_class = self.class.const_get(class_name)
+        else
+          sub_record_class = class_name.constantize
+        end
       rescue NameError
         return value
       end
