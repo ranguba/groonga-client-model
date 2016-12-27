@@ -1,5 +1,18 @@
 # NEWS
 
+## 0.9.5 - 2016-12-27
+
+### Improvements
+
+  * Added the default presence validation for `_key`.
+
+  * Supported validation on save by default.
+
+  * Supported Rails 4.
+
+  * Supported sub record class under the record class instead of
+    top-level.
+
 ## 0.9.4 - 2016-12-21
 
 ### Improvements
