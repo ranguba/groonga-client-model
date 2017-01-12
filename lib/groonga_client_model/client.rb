@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2016-2017  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -31,7 +31,21 @@ module GroongaClientModel
 
     def open
       Groonga::Client.open(url: @url) do |client|
+        client.extend(Notifiable)
         yield(client)
+      end
+    end
+
+    module Notifiable
+      private
+      def execute_command(command, &block)
+        name = "groonga.groonga_client_model"
+        payload = {
+          :command => command,
+        }
+        ActiveSupport::Notifications.instrument(name, payload) do
+          super(command, &block)
+        end
       end
     end
   end

@@ -44,6 +44,13 @@ module GroongaClientModel
       end
     end
 
+    initializer "groonga_client_model.log_runtime" do
+      require "groonga_client_model/railties/controller_runtime"
+      ActiveSupport.on_load(:action_controller) do
+        include GroongaClientModel::Railties::ControllerRuntime
+      end
+    end
+
     initializer "groonga_client_model.set_configs" do |app|
       ActiveSupport.on_load(:groonga_client_model) do
         app.config.groonga_client_model.each do |key, value|
