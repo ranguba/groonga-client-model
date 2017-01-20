@@ -1,12 +1,16 @@
 # NEWS
 
+## 0.9.7 - 2016-01-20
+
+### Improvements
+
+  * Supported Ruby 2.0.0 again.
+
 ## 0.9.6 - 2016-01-12
 
 ### Improvements
 
   * Supported logging.
-
-### Improvements
 
 ## 0.9.5 - 2016-12-27
 
