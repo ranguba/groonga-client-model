@@ -198,7 +198,7 @@ module GroongaClientModel
     end
 
     private
-    def save_raw(validate:)
+    def save_raw(validate: true)
       if validate
         if valid?
           upsert(validate: true)
@@ -227,7 +227,7 @@ module GroongaClientModel
       freeze
     end
 
-    def upsert(validate:)
+    def upsert(validate: true)
       if new_record?
         run_callbacks(:create) do
           upsert_raw(validate: validate)
@@ -239,7 +239,7 @@ module GroongaClientModel
       end
     end
 
-    def upsert_raw(validate:)
+    def upsert_raw(validate: true)
       return false unless upsert_sub_records(validate: validate)
 
       Client.open do |client|
@@ -280,7 +280,7 @@ module GroongaClientModel
       end
     end
 
-    def upsert_sub_records(validate:)
+    def upsert_sub_records(validate: true)
       attributes.each do |name, value|
         return false unless upsert_sub_record(value, validate)
       end
