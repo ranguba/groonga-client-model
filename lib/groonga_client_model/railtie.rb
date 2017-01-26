@@ -21,10 +21,9 @@ module GroongaClientModel
   class Railtie < Rails::Railtie
     config.groonga_client_model = ActiveSupport::OrderedOptions.new
 
-    # TODO
-    # config.app_generators.orm(:groonga_client_model,
-    #                           migration: true,
-    #                           timestamps: true)
+    if config.app_generators.orm.empty?
+      config.app_generators.orm(:groonga_client_model)
+    end
 
     config.action_dispatch.rescue_responses.merge!(
       "GroongaClientModel::RecordNotFound" => :not_found,
