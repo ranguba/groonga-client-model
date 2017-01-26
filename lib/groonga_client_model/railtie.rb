@@ -61,6 +61,37 @@ module GroongaClientModel
 
     initializer "groonga_client_model.initialize_client" do
       ActiveSupport.on_load(:groonga_client_model) do
+        config_dir = Rails.application.paths["config"].existent.first
+        config_path = Pathname(config_dir) + "groonga.yml"
+        unless config_path.exist?
+          config_path.open("w") do |config_file|
+            config_file.puts(<<-CONFIG)
+default: &default
+  url: http://127.0.0.1:10041/
+  # url: https://127.0.0.1:10041/
+  # protocol: http
+  # host: 127.0.0.1
+  # port: 10041
+  # user: alice
+  # password: secret
+  read_timeout: -1
+  # read_timeout: 3
+  backend: synchronous
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+  url: http://127.0.0.1:20041/
+
+production:
+  <<: *default
+  # url: http://production.example.com:10041/
+  read_timeout: 10
+            CONFIG
+          end
+        end
         config = Rails.application.config_for(:groonga)
         Client.url = config["url"]
       end
