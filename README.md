@@ -8,23 +8,35 @@ groonga-client-model
 
 Groonga-client-model is a model interface for groonga-client.
 
-## Install
-
-    % gem install groonga-client-model
-
 ## Usage
+
+Add the following to your `Gemfile`:
+
+```ruby
+gem "groonga-client-model"
+```
 
 TODO
 
 ## Dependencies
 
 * Ruby
-* groonga-client
+
+* [groonga-client](https://github.com/ranguba/groonga-client)
+
+* Active Model
 
 ## Mailing list
 
 * English: [groonga-talk@lists.sourceforge.net](https://lists.sourceforge.net/lists/listinfo/groonga-talk)
+
 * Japanese: [groonga-dev@lists.osdn.me](http://lists.osdn.me/mailman/listinfo/groonga-dev)
+
+## Chat
+
+* English: [groonga/en on Gitter](https://gitter.im/groonga/en)
+
+* Japanese: [groonga/ja on Gitter](https://gitter.im/groonga/ja)
 
 ## Authors
 
