@@ -43,6 +43,8 @@ module GroongaClientModel
       end
     end
 
+    reset_runtime
+
     def groonga(event)
       self.class.runtime += event.duration
 
