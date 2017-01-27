@@ -98,6 +98,18 @@ module GroongaClientModel
           match_columns(full_text_searchable_column_names)
       end
 
+      def create(attributes=nil)
+        if attributes.is_a?(Array)
+          attributes.collect do |attrs|
+            create(attrs)
+          end
+        else
+          record = new(attributes)
+          record.save
+          record
+        end
+      end
+
       private
       def define_method_attribute(name)
         define_method(name) do
