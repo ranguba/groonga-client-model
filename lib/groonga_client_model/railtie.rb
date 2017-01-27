@@ -50,6 +50,14 @@ module GroongaClientModel
       end
     end
 
+    initializer "groonga_client_model.set_reloader_hooks" do
+      ActiveSupport.on_load(:groonga_client_model) do
+        ActiveSupport::Reloader.before_class_unload do
+          GroongaClientModel::Record.clear_cache
+        end
+      end
+    end
+
     initializer "groonga_client_model.set_configs" do |app|
       ActiveSupport.on_load(:groonga_client_model) do
         app.config.groonga_client_model.each do |key, value|

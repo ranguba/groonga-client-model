@@ -33,6 +33,10 @@ module GroongaClientModel
         @@schema ||= Schema.new
       end
 
+      def clear_cache
+        @@schema = nil
+      end
+
       def table_name
         name.to_s.demodulize.underscore.pluralize
       end
