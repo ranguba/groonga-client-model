@@ -1,5 +1,15 @@
 # NEWS
 
+## 0.9.8 - 2016-01-27
+
+### Improvements
+
+  * Supported auto `config/groonga.yml` generation.
+
+  * Added `groonga_client_model:model` generator.
+
+  * {GroongaClientModel::Record.create}: Added.
+
 ## 0.9.7 - 2016-01-20
 
 ### Improvements
