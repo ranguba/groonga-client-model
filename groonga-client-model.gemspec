@@ -1,6 +1,6 @@
 # -*- ruby -*-
 #
-# Copyright (C) 2016  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2016-2017  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -43,7 +43,7 @@ Gem::Specification.new do |spec|
   spec.files += Dir.glob("doc/text/*")
   spec.test_files += Dir.glob("test/**/*")
 
-  spec.add_runtime_dependency("groonga-client", ">= 0.3.7")
+  spec.add_runtime_dependency("groonga-client", ">= 0.4.1")
   spec.add_runtime_dependency("groonga-command-parser")
   spec.add_runtime_dependency("activemodel")
 

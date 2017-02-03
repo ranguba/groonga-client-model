@@ -268,6 +268,7 @@ module GroongaClientModel
         response = client.load(table: table.name,
                                values: [value],
                                output_ids: "yes",
+                               output_errors: "yes",
                                command_version: "3")
         unless response.success?
           message = "Failed to save: "
@@ -275,7 +276,12 @@ module GroongaClientModel
           raise RecordNotSaved.new(message, self)
         end
         if response.n_loaded_records.zero?
-          message = "Failed to save: #{value.inspect}"
+          message = "Failed to save"
+          error = response.errors[0]
+          if error and !error.return_code.zero?
+            message << ": #{error.return_code}: #{error.message}: "
+          end
+          message << ": #{value.inspect}"
           raise RecordNotSaved.new(message, self)
         end
         if @new_record
