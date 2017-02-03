@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2016-2017  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -27,9 +27,11 @@ require "groonga_client_model/error"
 require "groonga_client_model/load_value_generator"
 require "groonga_client_model/modelizable"
 require "groonga_client_model/modelize"
-require "groonga_client_model/record"
 require "groonga_client_model/schema"
 require "groonga_client_model/schema_loader"
+require "groonga_client_model/validations/type_validator"
+
+require "groonga_client_model/record"
 
 module GroongaClientModel
   extend ActiveSupport::Autoload

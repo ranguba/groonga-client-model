@@ -7,3 +7,5 @@ table_create terms TABLE_PAT_KEY ShortText \
   --default_tokenizer TokenBigram \
   --normalizer NormalizerAuto
 column_create terms posts_body COLUMN_INDEX|WITH_POSITION posts body
+
+table_create ages TABLE_HASH_KEY UInt32

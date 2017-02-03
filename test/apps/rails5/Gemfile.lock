@@ -10,7 +10,7 @@ PATH
 PATH
   remote: ../../../
   specs:
-    groonga-client-model (0.9.8)
+    groonga-client-model (0.9.9)
       activemodel
       groonga-client (>= 0.3.7)
       groonga-command-parser

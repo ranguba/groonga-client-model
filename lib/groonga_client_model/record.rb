@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2016-2017  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -138,7 +138,10 @@ module GroongaClientModel
 
     attr_reader :attributes
 
-    validates :_key, presence: true, if: ->(record) {record.class.have_key?}
+    validates :_key,
+              presence: true,
+              "groonga_client_model/validations/type": true,
+              if: ->(record) {record.class.have_key?}
 
     def initialize(attributes=nil)
       @attributes = {}
