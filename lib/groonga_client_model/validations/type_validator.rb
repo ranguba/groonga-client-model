@@ -20,10 +20,10 @@ module GroongaClientModel
       def validate_each(record, attribute, value)
         column = record.class.columns[attribute]
         return if column.nil?
-        value_type = column.value_type
+        value_type = column["value_type"]
         return if value_type.nil?
 
-        case value_type.name
+        case value_type["name"]
         when "UInt32"
           validate_uint32(record, attribute, value)
         end

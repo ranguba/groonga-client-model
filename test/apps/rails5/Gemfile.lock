@@ -12,7 +12,7 @@ PATH
   specs:
     groonga-client-model (0.9.9)
       activemodel
-      groonga-client (>= 0.3.7)
+      groonga-client (>= 0.4.1)
       groonga-command-parser
 
 GEM
