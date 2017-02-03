@@ -15,11 +15,16 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 class TestRecord < Test::Unit::TestCase
+  Column = Groonga::Client::Response::Schema::Column
+
   sub_test_case("ActiveModel") do
     class EmptyModel < GroongaClientModel::Record
       class << self
         def columns
-          GroongaClientModel::Schema::Columns.new(nil, "_id" => {})
+          raw_columns = {
+            "_id" => Column.new(nil, {}),
+          }
+          GroongaClientModel::Schema::Columns.new(nil, raw_columns)
         end
       end
     end
@@ -55,7 +60,10 @@ class TestRecord < Test::Unit::TestCase
       class NoKey < GroongaClientModel::Record
         class << self
           def columns
-            GroongaClientModel::Schema::Columns.new(nil, "_id" => {})
+            raw_columns = {
+              "_id" => Column.new(nil, {}),
+            }
+            GroongaClientModel::Schema::Columns.new(nil, raw_columns)
           end
         end
       end
@@ -63,9 +71,16 @@ class TestRecord < Test::Unit::TestCase
       class HaveKey < GroongaClientModel::Record
         class << self
           def columns
-            GroongaClientModel::Schema::Columns.new(nil,
-                                                    "_id" => {},
-                                                    "_key" => {})
+            raw_columns = {
+              "_id" => Column.new(nil, {}),
+              "_key" => Column.new(nil, {
+                                     "name" => "_key",
+                                     "value_type" => {
+                                       "name" => "ShortText",
+                                     },
+                                   }),
+            }
+            GroongaClientModel::Schema::Columns.new(nil, raw_columns)
           end
         end
       end
