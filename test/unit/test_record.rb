@@ -165,6 +165,14 @@ class TestRecord < Test::Unit::TestCase
         end
       end
 
+      class TimeKey < Key
+        class << self
+          def key_type
+            "Time"
+          end
+        end
+      end
+
       sub_test_case("presence") do
         test "no key" do
           record = NoKey.new
@@ -323,6 +331,12 @@ class TestRecord < Test::Unit::TestCase
         sub_test_case("Float") do
           test("invalid") do
             assert_invalid(FloatKey, "String", :not_a_number)
+          end
+        end
+
+        sub_test_case("Time") do
+          test("invalid") do
+            assert_invalid(TimeKey, "String", :not_a_time)
           end
         end
       end

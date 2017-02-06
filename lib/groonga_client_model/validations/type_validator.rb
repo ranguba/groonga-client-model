@@ -42,6 +42,8 @@ module GroongaClientModel
           validate_int(record, attribute, value, 64)
         when "Float"
           validate_float(record, attribute, value)
+        when "Time"
+          validate_time(record, attribute, value)
         end
       end
 
@@ -110,6 +112,30 @@ module GroongaClientModel
         when Numeric
         else
           record.errors.add(attribute, :not_a_number)
+        end
+      end
+
+      def validate_time(record, attribute, value)
+        if value.is_a?(String)
+          begin
+            value = Float(value)
+          rescue ArgumentError
+            begin
+              value = Time.strptime(value, "%Y-%m-%d %H:%M:%S.%N")
+            rescue ArgumentError
+              begin
+                value = Time.strptime(value, "%Y-%m-%d %H:%M:%S")
+              rescue ArgumentError
+              end
+            end
+          end
+        end
+
+        case value
+        when Date, Time, Numeric
+        else
+          record.errors.add(attribute, :not_a_time,
+                            options.merge(inspected_value: value.inspect))
         end
       end
     end
