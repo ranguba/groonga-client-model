@@ -1,0 +1,23 @@
+ja:
+  errors:
+    messages:
+      not_a_positive_integer:
+        "正の整数でなければいけません：%{inspected_value}"
+      invalid_uint8:
+        "2 ** 8以下でなければいけません：%{inspected_value}"
+      invalid_uint16:
+        "2 ** 16以下でなければいけません：%{inspected_value}"
+      invalid_uint32:
+        "2 ** 32以下でなければいけません：%{inspected_value}"
+      invalid_uint64:
+        "2 ** 64以下でなければいけません：%{inspected_value}"
+      invalid_int8:
+        "-(2 ** 7)以上(2 ** 7) - 1以下でなければいけません：%{inspected_value}"
+      invalid_int16:
+        "-(2 ** 15)以上(2 ** 15) - 1以下でなければいけません：%{inspected_value}"
+      invalid_int32:
+        "-(2 ** 31)以上(2 ** 31) - 1以下でなければいけません：%{inspected_value}"
+      invalid_int64:
+        "-(2 ** 63)以上(2 ** 63) - 1以下でなければいけません：%{inspected_value}"
+      not_a_time:
+        "時間でなければいけません：%{inspected_value}"

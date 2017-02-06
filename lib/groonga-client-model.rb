@@ -47,4 +47,5 @@ end
 
 ActiveSupport.on_load(:i18n) do
   I18n.load_path << "#{__dir__}/groonga_client_model/locale/en.yml"
+  I18n.load_path << "#{__dir__}/groonga_client_model/locale/ja.yml"
 end
