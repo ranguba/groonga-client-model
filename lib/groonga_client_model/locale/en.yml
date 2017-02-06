@@ -1,0 +1,7 @@
+en:
+  errors:
+    messages:
+      uint:
+        "must be positive integer: %{inspected_value}"
+      uint32:
+        "must be less than 2 ** 32: %{inspected_value}"

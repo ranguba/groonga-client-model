@@ -30,7 +30,7 @@ module GroongaClientModel
       end
 
       private
-      def validate_uint32(record, attribute, value)
+      def validate_uint(record, attribute, value, n_bits)
         if value.is_a?(String)
           begin
             value = Integer(value)
@@ -40,15 +40,27 @@ module GroongaClientModel
 
         case value
         when Numeric
-          return if value >= 0
-          record.errors.add(attribute,
-                            "must be positive integer: #{value.inspect}",
-                            options)
+          if value < 0
+            record.errors.add(attribute,
+                              :uint,
+                              options.merge(inspected_value: value.inspect))
+            return
+          end
+          if value > ((2 ** n_bits) - 1)
+            record.errors.add(attribute,
+                              :"uint#{n_bits}",
+                              options.merge(inspected_value: value.inspect))
+            return
+          end
         else
           record.errors.add(attribute,
-                            "must be positive integer: #{value.inspect}",
-                            options)
+                            :uint,
+                            options.merge(inspected_value: value.inspect))
         end
+      end
+
+      def validate_uint32(record, attribute, value)
+        validate_uint(record, attribute, value, 32)
       end
     end
   end

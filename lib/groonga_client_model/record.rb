@@ -138,10 +138,13 @@ module GroongaClientModel
 
     attr_reader :attributes
 
-    validates :_key,
+    validates(:_key,
               presence: true,
+              if: ->(record) {record.class.have_key?})
+    validates(:_key,
               "groonga_client_model/validations/type": true,
-              if: ->(record) {record.class.have_key?}
+              if: ->(record) {record.class.have_key?},
+              allow_blank: true)
 
     def initialize(attributes=nil)
       @attributes = {}

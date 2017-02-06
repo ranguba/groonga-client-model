@@ -44,3 +44,7 @@ ActiveSupport.run_load_hooks(:groonga_client_model, GroongaClientModel)
 if defined?(Rails)
   require "groonga_client_model/railtie"
 end
+
+ActiveSupport.on_load(:i18n) do
+  I18n.load_path << "#{__dir__}/groonga_client_model/locale/en.yml"
+end

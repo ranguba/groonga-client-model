@@ -56,7 +56,7 @@ class TestRecord < Test::Unit::TestCase
   end
 
   sub_test_case("validations") do
-    sub_test_case("_key presence") do
+    sub_test_case("_key") do
       class NoKey < GroongaClientModel::Record
         class << self
           def columns
@@ -68,7 +68,7 @@ class TestRecord < Test::Unit::TestCase
         end
       end
 
-      class HaveKey < GroongaClientModel::Record
+      class Key < GroongaClientModel::Record
         class << self
           def columns
             raw_columns = {
@@ -76,7 +76,7 @@ class TestRecord < Test::Unit::TestCase
               "_key" => Column.new(nil, {
                                      "name" => "_key",
                                      "value_type" => {
-                                       "name" => "ShortText",
+                                       "name" => key_type,
                                      },
                                    }),
             }
@@ -85,23 +85,99 @@ class TestRecord < Test::Unit::TestCase
         end
       end
 
-      test "no key" do
-        record = NoKey.new
-        assert do
-          record.valid?
+      class ShortTextKey < Key
+        class << self
+          def key_type
+            "ShortText"
+          end
         end
-        assert_equal({}, record.errors.messages)
       end
 
-      test "have key" do
-        record = HaveKey.new
-        assert do
-          not record.save
+      class UInt32Key < Key
+        class << self
+          def key_type
+            "UInt32"
+          end
         end
-        assert_equal({
-                       :_key => [record.errors.generate_message(:_key, :blank)],
-                     },
-                     record.errors.messages)
+      end
+
+      sub_test_case("presence") do
+        test "no key" do
+          record = NoKey.new
+          assert do
+            record.valid?
+          end
+          assert_equal({}, record.errors.messages)
+        end
+
+        test "missing key" do
+          record = ShortTextKey.new
+          assert do
+            not record.valid?
+          end
+          message = record.errors.generate_message(:_key, :blank)
+          assert_equal({
+                         :_key => [message],
+                       },
+                       record.errors.messages)
+        end
+
+        test "blank key" do
+          record = UInt32Key.new(_key: "")
+          assert do
+            not record.valid?
+          end
+          message = record.errors.generate_message(:_key, :blank)
+          assert_equal({
+                         :_key => [message],
+                       },
+                       record.errors.messages)
+        end
+
+        test "have key" do
+          record = ShortTextKey.new(_key: "String")
+          assert do
+            record.valid?
+          end
+          assert_equal({},
+                       record.errors.messages)
+        end
+      end
+
+      sub_test_case("type") do
+        sub_test_case("UInt32") do
+          test("invalid") do
+            key = "String"
+            record = UInt32Key.new(_key: key)
+            assert do
+              not record.valid?
+            end
+            options = {
+              inspected_value: key.inspect
+            }
+            message = record.errors.generate_message(:_key, :uint, options)
+            assert_equal({
+                           :_key => [message],
+                         },
+                         record.errors.messages)
+          end
+
+          test("too large") do
+            key = 2 ** 32
+            record = UInt32Key.new(_key: key)
+            assert do
+              not record.valid?
+            end
+            options = {
+              inspected_value: key.inspect
+            }
+            message = record.errors.generate_message(:_key, :uint32, options)
+            assert_equal({
+                           :_key => [message],
+                         },
+                         record.errors.messages)
+          end
+        end
       end
     end
   end
