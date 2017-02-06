@@ -11,3 +11,13 @@ en:
         "must be less than 2 ** 32: %{inspected_value}"
       uint64:
         "must be less than 2 ** 64: %{inspected_value}"
+      int:
+        "must be integer: %{inspected_value}"
+      int8:
+        "must be between -(2 ** 7) and (2 ** 7) - 1: %{inspected_value}"
+      int16:
+        "must be between -(2 ** 15) and (2 ** 15) - 1: %{inspected_value}"
+      int32:
+        "must be between -(2 ** 31) and (2 ** 31) - 1: %{inspected_value}"
+      int64:
+        "must be between -(2 ** 63) and (2 ** 63) - 1: %{inspected_value}"

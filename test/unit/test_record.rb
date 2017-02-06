@@ -125,6 +125,38 @@ class TestRecord < Test::Unit::TestCase
         end
       end
 
+      class Int8Key < Key
+        class << self
+          def key_type
+            "Int8"
+          end
+        end
+      end
+
+      class Int16Key < Key
+        class << self
+          def key_type
+            "Int16"
+          end
+        end
+      end
+
+      class Int32Key < Key
+        class << self
+          def key_type
+            "Int32"
+          end
+        end
+      end
+
+      class Int64Key < Key
+        class << self
+          def key_type
+            "Int64"
+          end
+        end
+      end
+
       sub_test_case("presence") do
         test "no key" do
           record = NoKey.new
@@ -221,6 +253,62 @@ class TestRecord < Test::Unit::TestCase
 
           test("too large") do
             assert_invalid(UInt64Key, 2 ** 64, :uint64)
+          end
+        end
+
+        sub_test_case("Int8") do
+          test("invalid") do
+            assert_invalid(Int8Key, "String", :int)
+          end
+
+          test("too small") do
+            assert_invalid(Int8Key, -(2 ** 7) - 1, :int8)
+          end
+
+          test("too large") do
+            assert_invalid(Int8Key, 2 ** 7, :int8)
+          end
+        end
+
+        sub_test_case("Int16") do
+          test("invalid") do
+            assert_invalid(Int16Key, "String", :int)
+          end
+
+          test("too small") do
+            assert_invalid(Int16Key, -(2 ** 15) - 1, :int16)
+          end
+
+          test("too large") do
+            assert_invalid(Int16Key, 2 ** 15, :int16)
+          end
+        end
+
+        sub_test_case("Int32") do
+          test("invalid") do
+            assert_invalid(Int32Key, "String", :int)
+          end
+
+          test("too small") do
+            assert_invalid(Int32Key, -(2 ** 31) - 1, :int32)
+          end
+
+          test("too large") do
+            assert_invalid(Int32Key, 2 ** 31, :int32)
+          end
+        end
+
+        sub_test_case("Int64") do
+          test("invalid") do
+            assert_invalid(Int64Key, "String", :int)
+          end
+
+          test("too small") do
+            assert_invalid(Int64Key, -(2 ** 63) - 1, :int64)
+          end
+
+          test("too large") do
+            assert_invalid(Int64Key, 2 ** 63, :int64)
           end
         end
       end

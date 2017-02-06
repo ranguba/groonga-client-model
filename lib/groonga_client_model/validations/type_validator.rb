@@ -32,6 +32,14 @@ module GroongaClientModel
           validate_uint(record, attribute, value, 32)
         when "UInt64"
           validate_uint(record, attribute, value, 64)
+        when "Int8"
+          validate_int(record, attribute, value, 8)
+        when "Int16"
+          validate_int(record, attribute, value, 16)
+        when "Int32"
+          validate_int(record, attribute, value, 32)
+        when "Int64"
+          validate_int(record, attribute, value, 64)
         end
       end
 
@@ -61,6 +69,31 @@ module GroongaClientModel
         else
           record.errors.add(attribute,
                             :uint,
+                            options.merge(inspected_value: value.inspect))
+        end
+      end
+
+      def validate_int(record, attribute, value, n_bits)
+        if value.is_a?(String)
+          begin
+            value = Integer(value)
+          rescue ArgumentError
+          end
+        end
+
+        case value
+        when Numeric
+          min = -(2 ** (n_bits - 1))
+          max = ((2 ** (n_bits - 1)) - 1)
+          if value < min or value > max
+            record.errors.add(attribute,
+                              :"int#{n_bits}",
+                              options.merge(inspected_value: value.inspect))
+            return
+          end
+        else
+          record.errors.add(attribute,
+                            :int,
                             options.merge(inspected_value: value.inspect))
         end
       end
