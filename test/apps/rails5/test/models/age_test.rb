@@ -1,6 +1,8 @@
 require 'test_helper'
 
 class AgeTest < ActiveSupport::TestCase
+  include GroongaClientModel::TestHelper
+
   test "validate: _key: invalid: string" do
     age = Age.new(_key: "Hello")
     assert(age.invalid?)
