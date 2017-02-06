@@ -1,23 +1,21 @@
 en:
   errors:
     messages:
-      uint:
-        "must be positive integer: %{inspected_value}"
-      uint8:
+      not_a_positive_integer:
+        "must be a positive integer: %{inspected_value}"
+      invalid_uint8:
         "must be less than 2 ** 8: %{inspected_value}"
-      uint16:
+      invalid_uint16:
         "must be less than 2 ** 16: %{inspected_value}"
-      uint32:
+      invalid_uint32:
         "must be less than 2 ** 32: %{inspected_value}"
-      uint64:
+      invalid_uint64:
         "must be less than 2 ** 64: %{inspected_value}"
-      int:
-        "must be integer: %{inspected_value}"
-      int8:
+      invalid_int8:
         "must be between -(2 ** 7) and (2 ** 7) - 1: %{inspected_value}"
-      int16:
+      invalid_int16:
         "must be between -(2 ** 15) and (2 ** 15) - 1: %{inspected_value}"
-      int32:
+      invalid_int32:
         "must be between -(2 ** 31) and (2 ** 31) - 1: %{inspected_value}"
-      int64:
+      invalid_int64:
         "must be between -(2 ** 63) and (2 ** 63) - 1: %{inspected_value}"

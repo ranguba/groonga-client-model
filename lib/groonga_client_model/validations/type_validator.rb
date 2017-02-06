@@ -40,6 +40,8 @@ module GroongaClientModel
           validate_int(record, attribute, value, 32)
         when "Int64"
           validate_int(record, attribute, value, 64)
+        when "Float"
+          validate_float(record, attribute, value)
         end
       end
 
@@ -56,19 +58,19 @@ module GroongaClientModel
         when Numeric
           if value < 0
             record.errors.add(attribute,
-                              :uint,
+                              :not_a_positive_integer,
                               options.merge(inspected_value: value.inspect))
             return
           end
           if value > ((2 ** n_bits) - 1)
             record.errors.add(attribute,
-                              :"uint#{n_bits}",
+                              :"invalid_uint#{n_bits}",
                               options.merge(inspected_value: value.inspect))
             return
           end
         else
           record.errors.add(attribute,
-                            :uint,
+                            :not_a_positive_integer,
                             options.merge(inspected_value: value.inspect))
         end
       end
@@ -87,14 +89,27 @@ module GroongaClientModel
           max = ((2 ** (n_bits - 1)) - 1)
           if value < min or value > max
             record.errors.add(attribute,
-                              :"int#{n_bits}",
+                              :"invalid_int#{n_bits}",
                               options.merge(inspected_value: value.inspect))
             return
           end
         else
-          record.errors.add(attribute,
-                            :int,
-                            options.merge(inspected_value: value.inspect))
+          record.errors.add(attribute, :not_an_integer)
+        end
+      end
+
+      def validate_float(record, attribute, value)
+        if value.is_a?(String)
+          begin
+            value = Float(value)
+          rescue ArgumentError
+          end
+        end
+
+        case value
+        when Numeric
+        else
+          record.errors.add(attribute, :not_a_number)
         end
       end
     end
