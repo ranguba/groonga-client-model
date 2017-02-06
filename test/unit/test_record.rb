@@ -93,10 +93,34 @@ class TestRecord < Test::Unit::TestCase
         end
       end
 
+      class UInt8Key < Key
+        class << self
+          def key_type
+            "UInt8"
+          end
+        end
+      end
+
+      class UInt16Key < Key
+        class << self
+          def key_type
+            "UInt16"
+          end
+        end
+      end
+
       class UInt32Key < Key
         class << self
           def key_type
             "UInt32"
+          end
+        end
+      end
+
+      class UInt64Key < Key
+        class << self
+          def key_type
+            "UInt64"
           end
         end
       end
@@ -145,37 +169,58 @@ class TestRecord < Test::Unit::TestCase
       end
 
       sub_test_case("type") do
-        sub_test_case("UInt32") do
+        def assert_invalid(klass, key, message_key)
+          record = klass.new(_key: key)
+          assert do
+            not record.valid?
+          end
+          options = {
+            inspected_value: key.inspect
+          }
+          message = record.errors.generate_message(:_key, message_key, options)
+          assert_equal({
+                         :_key => [message],
+                       },
+                       record.errors.messages)
+        end
+
+        sub_test_case("UInt8") do
           test("invalid") do
-            key = "String"
-            record = UInt32Key.new(_key: key)
-            assert do
-              not record.valid?
-            end
-            options = {
-              inspected_value: key.inspect
-            }
-            message = record.errors.generate_message(:_key, :uint, options)
-            assert_equal({
-                           :_key => [message],
-                         },
-                         record.errors.messages)
+            assert_invalid(UInt8Key, "String", :uint)
           end
 
           test("too large") do
-            key = 2 ** 32
-            record = UInt32Key.new(_key: key)
-            assert do
-              not record.valid?
-            end
-            options = {
-              inspected_value: key.inspect
-            }
-            message = record.errors.generate_message(:_key, :uint32, options)
-            assert_equal({
-                           :_key => [message],
-                         },
-                         record.errors.messages)
+            assert_invalid(UInt8Key, 2 ** 8, :uint8)
+          end
+        end
+
+        sub_test_case("UInt16") do
+          test("invalid") do
+            assert_invalid(UInt16Key, "String", :uint)
+          end
+
+          test("too large") do
+            assert_invalid(UInt16Key, 2 ** 16, :uint16)
+          end
+        end
+
+        sub_test_case("UInt32") do
+          test("invalid") do
+            assert_invalid(UInt32Key, "String", :uint)
+          end
+
+          test("too large") do
+            assert_invalid(UInt32Key, 2 ** 32, :uint32)
+          end
+        end
+
+        sub_test_case("UInt64") do
+          test("invalid") do
+            assert_invalid(UInt64Key, "String", :uint)
+          end
+
+          test("too large") do
+            assert_invalid(UInt64Key, 2 ** 64, :uint64)
           end
         end
       end

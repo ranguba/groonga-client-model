@@ -3,5 +3,11 @@ en:
     messages:
       uint:
         "must be positive integer: %{inspected_value}"
+      uint8:
+        "must be less than 2 ** 8: %{inspected_value}"
+      uint16:
+        "must be less than 2 ** 16: %{inspected_value}"
       uint32:
         "must be less than 2 ** 32: %{inspected_value}"
+      uint64:
+        "must be less than 2 ** 64: %{inspected_value}"

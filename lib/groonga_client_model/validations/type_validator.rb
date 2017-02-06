@@ -24,8 +24,14 @@ module GroongaClientModel
         return if value_type.nil?
 
         case value_type["name"]
+        when "UInt8"
+          validate_uint(record, attribute, value, 8)
+        when "UInt16"
+          validate_uint(record, attribute, value, 16)
         when "UInt32"
-          validate_uint32(record, attribute, value)
+          validate_uint(record, attribute, value, 32)
+        when "UInt64"
+          validate_uint(record, attribute, value, 64)
         end
       end
 
@@ -57,10 +63,6 @@ module GroongaClientModel
                             :uint,
                             options.merge(inspected_value: value.inspect))
         end
-      end
-
-      def validate_uint32(record, attribute, value)
-        validate_uint(record, attribute, value, 32)
       end
     end
   end
