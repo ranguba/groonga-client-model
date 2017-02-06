@@ -9,7 +9,7 @@ class AgeTest < ActiveSupport::TestCase
     assert(age.invalid?)
     assert_equal([age.errors.generate_message(:_key,
                                               :not_a_positive_integer,
-                                              inspected_value: key.inspect)])
+                                              inspected_value: key.inspect)],
                  age.errors.full_messages)
   end
 end
