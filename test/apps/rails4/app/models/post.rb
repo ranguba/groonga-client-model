@@ -1,2 +1,2 @@
-class Post < GroongaClientModel::Record
+class Post < ApplicationGroongaRecord
 end
