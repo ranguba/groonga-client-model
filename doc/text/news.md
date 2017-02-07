@@ -1,5 +1,11 @@
 # NEWS
 
+## 1.0.0 - 2016-02-07
+
+### Fixes
+
+  * Supported Rails 4 again.
+
 ## 0.9.9 - 2016-02-07
 
 ### Improvements
