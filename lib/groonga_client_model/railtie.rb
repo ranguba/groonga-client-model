@@ -52,8 +52,15 @@ module GroongaClientModel
 
     initializer "groonga_client_model.set_reloader_hooks" do
       ActiveSupport.on_load(:groonga_client_model) do
-        ActiveSupport::Reloader.before_class_unload do
-          GroongaClientModel::Record.clear_cache
+        if ActiveSupport.const_defined?(:Reloader)
+          ActiveSupport::Reloader.before_class_unload do
+            GroongaClientModel::Record.clear_cache
+          end
+        else
+          # For Rails < 5
+          ActionDispatch::Reloader.to_cleanup do
+            GroongaClientModel::Record.clear_cache
+          end
         end
       end
     end
