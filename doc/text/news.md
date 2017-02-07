@@ -1,5 +1,18 @@
 # NEWS
 
+## 0.9.9 - 2016-02-07
+
+### Improvements
+
+  * {GroongaClientModel::Record}: Added `_key` validation by default.
+
+  * {GroongaClientModel::Record}: Supported `load --output_errors yes
+    --command_version 3` introduced since Groonga 7.0.0.
+
+  * Required groonga-client gem 0.4.1 or later.
+
+  * Supported i18n.
+
 ## 0.9.8 - 2016-01-27
 
 ### Improvements
