@@ -1,6 +1,6 @@
 # -*- ruby -*-
 #
-# Copyright (C) 2016  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2016-2017  Kouhei Sutou <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -16,6 +16,8 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+require "groonga_client_model/migrator"
+
 namespace :groonga do
   namespace :config do
     desc "Load config/groonga.rb"
@@ -26,10 +28,20 @@ namespace :groonga do
   end
 
   namespace :schema do
-    desc "Loads db/schema.grn into Groonga"
+    desc "Loads db/schema.grn into the Groonga database"
     task load: ["config:load"] do
       schema_loader = GroongaClientModel::SchemaLoader.new(Rails.root)
       schema_loader.load
     end
+  end
+
+  desc "Migrate the Groonga database"
+  task :migrate do
+    Rails.application.paths["db/groonga/migrate"] ||= "db/groonga/migrate"
+    migration_paths = Rails.application.paths["db/groonga/migrate"].to_a
+    version = nil
+    version = Integer(ENV["VERSION"]) if ENV["VERSION"]
+    migrator = GroongaClientModel::Migrator.new(migration_paths, version)
+    migrator.migrate
   end
 end
