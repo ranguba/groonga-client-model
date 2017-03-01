@@ -61,6 +61,8 @@ module GroongaClientModel
           parameter(:key_type, key_type).
           response
       end
+
+      yield(CreateTableMigration.new(self, name)) if block_given?
     end
 
     def remove_table(name)
@@ -69,6 +71,38 @@ module GroongaClientModel
       end
 
       remove_table_raw(name)
+    end
+
+    def add_column(table_name, column_name, value_type, options={})
+      return remove_column_raw(name) if @reverting
+
+      value_type = normalize_type(value_type)
+      flags = []
+      flags << normalize_column_type(options[:type] || :scalar)
+      arguments = [
+        table_name,
+        column_name,
+        flags: flags,
+        value_type: value_type,
+      ]
+      report(__method__, arguments) do
+        @client.request(:column_create).
+          parameter(:table, table_name).
+          parameter(:name, column_name).
+          flags_parameter(:flags, flags).
+          parameter(:type, value_type).
+          values_parameter(:source, options[:source]).
+          response
+      end
+    end
+
+    def remove_column(table_name, column_name)
+      if @reverting
+        message = "can't revert remove_column(#{table_name}, #{column_name})"
+        raise IrreversibleMigrationError, message
+      end
+
+      remove_column_raw(table_name, column_name)
     end
 
     private
@@ -85,14 +119,33 @@ module GroongaClientModel
       case type.to_s
       when "array", /\A(?:TABLE_)?NO_KEY\z/i
         "TABLE_NO_KEY"
-      when "hash", /\A(?:TABLE_)?HASH_KEY\z/i
+      when "hash", "hash_table", /\A(?:TABLE_)?HASH_KEY\z/i
         "TABLE_HASH_KEY"
       when "pat", "patricia_trie", /\A(?:TABLE_)?PAT_KEY\z/i
         "TABLE_PAT_KEY"
       when "dat", "double_array_trie", /\A(?:TABLE_)?DAT_KEY\z/i
         "TABLE_DAT_KEY"
       else
-        type
+        message = "table type must be one of "
+        message << "[:array, :hash_table, :patricia_trie, :double_array_trie]: "
+        message << "#{type.inspect}"
+        raise InvalidArgument, message
+      end
+    end
+
+    def normalize_column_type(type)
+      case type.to_s
+      when "scalar", /\A(?:COLUMN_)?SCALAR\z/i
+        "COLUMN_SCALAR"
+      when "vector", /\A(?:COLUMN_)?VECTOR\z/i
+        "COLUMN_VECTOR"
+      when "index", /\A(?:COLUMN_)?INDEX\z/i
+        "COLUMN_INDEX"
+      else
+        message = "table type must be one of "
+        message << "[:array, :hash_table, :patricia_trie, :double_array_trie]: "
+        message << "#{type.inspect}"
+        raise InvalidArgument, message
       end
     end
 
@@ -128,6 +181,30 @@ module GroongaClientModel
         @client.request(:table_remove).
           parameter(:name, name).
           response
+      end
+    end
+
+    def remove_column_raw(table_name, column_name)
+      report(:remove_column, [table_name, column_name]) do
+        @client.request(:column_remove).
+          parameter(:table_name, table_name).
+          parameter(:name, column_name).
+          response
+      end
+    end
+
+    class CreateTableMigration
+      def initialize(migration, table_name)
+        @migration = migration
+        @table_name = table_name
+      end
+
+      def short_text(column_name, options={})
+        @migration.add_column(@table_name, column_name, :short_text, options)
+      end
+
+      def text(column_name, options={})
+        @migration.add_column(@table_name, column_name, :text, options)
       end
     end
   end
