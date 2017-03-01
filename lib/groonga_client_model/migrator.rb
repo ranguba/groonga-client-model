@@ -21,6 +21,8 @@ module GroongaClientModel
     def initialize(search_paths, target_version)
       @search_paths = Array(search_paths)
       @target_version = target_version
+      ensure_versions
+      @current_version = @versions.last || 0
     end
 
     def migrate
@@ -30,15 +32,17 @@ module GroongaClientModel
           report(definition) do
             if forward?
               migration.up
+              add_version(client, definition.version)
             else
               migration.down
+              delete_version(client, definition.version)
             end
           end
         end
       end
     end
 
-    def each(&block)
+    def each
       paths = []
       @search_paths.each do |search_path|
         paths |= Dir.glob("#{search_path}/**/[0-9]*_*.rb").collect do |path|
@@ -53,20 +57,62 @@ module GroongaClientModel
       sorted_definitions = definitions.sort_by(&:version)
 
       if forward?
-        sorted_definitions.each(&block)
+        sorted_definitions.each do |definition|
+          yield(definition) if definition.version > @current_version
+        end
       else
-        sorted_definitions.reverse_each(&block)
+        sorted_definitions.reverse_each do |definition|
+          yield(definition) if definition.version <= @current_version
+        end
       end
     end
 
     private
-    def forward?
-      @target_version.nil? or
-        (@target_version > current_version)
+    def version_table_name
+      "schema_versions"
     end
 
-    def current_version
-      0 # TODO
+    def ensure_versions
+      Client.open do |client|
+        table_name = version_table_name
+        exist = client.object_exist(name: table_name).body
+        if exist
+          @versions = client.request(:select).
+            parameter(:table, table_name).
+            sort_keys([:_key]).
+            limit(-1).
+            output_columns(["_key"]).
+            response.
+            records.
+            collect(&:_key)
+        else
+          client.request(:table_create).
+            parameter(:name, table_name).
+            flags_parameter(:flags, ["TABLE_PAT_KEY"]).
+            parameter(:key_type, "UInt64").
+            response
+          @versions = []
+        end
+      end
+    end
+
+    def forward?
+      @target_version.nil? or
+        (@target_version > @current_version)
+    end
+
+    def add_version(client, version)
+      client.request(:load).
+        parameter(:table, version_table_name).
+        parameter(:values, [{"_key" => version}].to_json).
+        response
+    end
+
+    def delete_version(client, version)
+      client.request(:delete).
+        parameter(:table, version_table_name).
+        parameter(:key, version).
+        response
     end
 
     def report(definition)
