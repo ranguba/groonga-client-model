@@ -14,6 +14,8 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+require "benchmark"
+
 module GroongaClientModel
   class MigrationError < Error
   end
@@ -22,8 +24,11 @@ module GroongaClientModel
   end
 
   class Migration
+    attr_accessor :output
+
     def initialize(client)
       @client = client
+      @output = nil
       @reverting = false
     end
 
@@ -106,6 +111,14 @@ module GroongaClientModel
     end
 
     private
+    def puts(*args)
+      if @output
+        @output.puts(*args)
+      else
+        super
+      end
+    end
+
     def report(method_name, arguments)
       argument_list = arguments.collect(&:inspect).join(", ")
       puts("-- #{method_name}(#{argument_list})")

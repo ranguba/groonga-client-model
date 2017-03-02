@@ -29,6 +29,9 @@ $LOAD_PATH.unshift(lib_dir.to_s)
 
 require "test-unit"
 require "groonga-client-model"
+require "groonga_client_model/test_helper"
+
+GroongaClientModel::Client.url = "http://127.0.0.1:20041"
 
 Thread.abort_on_exception = true
 

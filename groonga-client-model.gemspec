@@ -43,7 +43,7 @@ Gem::Specification.new do |spec|
   spec.files += Dir.glob("doc/text/*")
   spec.test_files += Dir.glob("test/**/*")
 
-  spec.add_runtime_dependency("groonga-client", ">= 0.4.1")
+  spec.add_runtime_dependency("groonga-client", ">= 0.4.2")
   spec.add_runtime_dependency("groonga-command-parser")
   spec.add_runtime_dependency("activemodel")
 
