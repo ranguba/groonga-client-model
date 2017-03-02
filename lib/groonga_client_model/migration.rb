@@ -110,7 +110,7 @@ module GroongaClientModel
       argument_list = arguments.collect(&:inspect).join(", ")
       puts("-- #{method_name}(#{argument_list})")
       time = Benchmark.measure do
-        response = yield
+        yield
       end
       puts("   -> %.4fs" % time.real)
     end
