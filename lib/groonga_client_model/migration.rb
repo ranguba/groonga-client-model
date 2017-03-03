@@ -142,7 +142,7 @@ module GroongaClientModel
         message = "table type must be one of "
         message << "[:array, :hash_table, :patricia_trie, :double_array_trie]: "
         message << "#{type.inspect}"
-        raise InvalidArgument, message
+        raise ArgumentError, message
       end
     end
 
@@ -158,7 +158,7 @@ module GroongaClientModel
         message = "table type must be one of "
         message << "[:array, :hash_table, :patricia_trie, :double_array_trie]: "
         message << "#{type.inspect}"
-        raise InvalidArgument, message
+        raise ArgumentError, message
       end
     end
 

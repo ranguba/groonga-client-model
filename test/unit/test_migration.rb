@@ -87,6 +87,29 @@ table_create posts TABLE_NO_KEY
       end
     end
 
+    sub_test_case(":type => :patricia_trie") do
+      test("default") do
+        expected_up_report = <<-REPORT
+-- create_table(:terms, {:type=>"TABLE_PAT_KEY", :key_type=>"ShortText"})
+   -> 0.0s
+        REPORT
+        expected_down_report = <<-REPORT
+-- remove_table(:terms)
+   -> 0.0s
+        REPORT
+        expected_dump = <<-DUMP.chomp
+table_create terms TABLE_PAT_KEY ShortText
+      DUMP
+        assert_migrate(expected_up_report,
+                       expected_down_report,
+                       expected_dump) do |migration|
+          migration.instance_eval do
+            create_table(:terms, :type => :patricia_trie)
+          end
+        end
+      end
+    end
+
     sub_test_case("columns") do
       sub_test_case("#short_text") do
         test("default") do
