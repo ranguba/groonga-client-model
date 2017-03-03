@@ -16,6 +16,7 @@
 
 require "rails/generators/named_base"
 require "rails/generators/active_model"
+
 require "groonga-client-model"
 
 module GroongaClientModel
