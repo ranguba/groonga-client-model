@@ -21,7 +21,7 @@ require "groonga-client-model"
 module GroongaClientModel
   module Generators
     class ModelGenerator < Rails::Generators::NamedBase
-      source_root File.join(__dir__, "templates")
+      source_root File.join(__dir__, "model", "templates")
 
       argument :attributes,
                type: :array,
