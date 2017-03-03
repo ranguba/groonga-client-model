@@ -62,10 +62,18 @@ module GroongaClientModel
                      key_type: nil,
                      tokenizer: nil,
                      default_tokenizer: nil,
-                     normalizer: nil)
+                     normalizer: nil,
+                     propose: nil)
       if @reverting
         @pending_actions << [:remove_table, name]
         return
+      end
+
+      case propose
+      when :full_text_search
+        type ||= :patricia_trie
+        tokenizer ||= :bigram
+        normalizer ||= :auto
       end
 
       type = normalize_table_type(type || :array)
