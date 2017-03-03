@@ -10,9 +10,9 @@ PATH
 PATH
   remote: ../../../
   specs:
-    groonga-client-model (1.0.0)
+    groonga-client-model (1.0.1)
       activemodel
-      groonga-client (>= 0.4.1)
+      groonga-client (>= 0.4.2)
       groonga-command-parser
 
 GEM
