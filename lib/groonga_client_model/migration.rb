@@ -30,6 +30,7 @@ module GroongaClientModel
       @client = client
       @output = nil
       @reverting = false
+      @pending_actions = []
     end
 
     def up
@@ -43,12 +44,17 @@ module GroongaClientModel
     end
 
     def revert
+      @pending_actions.clear
       @reverting = true
       begin
         yield
       ensure
         @reverting = false
       end
+      @pending_actions.reverse_each do |action|
+        public_send(*action)
+      end
+      @pending_actions.clear
     end
 
     def create_table(name,
@@ -57,7 +63,10 @@ module GroongaClientModel
                      tokenizer: nil,
                      default_tokenizer: nil,
                      normalizer: nil)
-      return remove_table_raw(name) if @reverting
+      if @reverting
+        @pending_actions << [:remove_table, name]
+        return
+      end
 
       type = normalize_table_type(type || :array)
       if type != "TABLE_NO_KEY" and key_type.nil?
@@ -91,7 +100,11 @@ module GroongaClientModel
         raise IrreversibleMigrationError, "can't revert remove_table(#{name})"
       end
 
-      remove_table_raw(name)
+      report(__method__, [name]) do
+        @client.request(:table_remove).
+          parameter(:name, name).
+          response
+      end
     end
 
     def add_column(table_name, column_name, value_type,
@@ -99,7 +112,10 @@ module GroongaClientModel
                    type: nil,
                    sources: nil,
                    source: nil)
-      return remove_column_raw(name) if @reverting
+      if @reverting
+        @pending_actions << [:remove_column, table_name, column_name]
+        return
+      end
 
       value_type = normalize_type(value_type)
       type = normalize_column_type(type || :scalar)
@@ -136,7 +152,12 @@ module GroongaClientModel
         raise IrreversibleMigrationError, message
       end
 
-      remove_column_raw(table_name, column_name)
+      report(__method__, [table_name, column_name]) do
+        @client.request(:column_remove).
+          parameter(:table_name, table_name).
+          parameter(:name, column_name).
+          response
+      end
     end
 
     private
@@ -237,23 +258,6 @@ module GroongaClientModel
         "NormalizerAuto"
       else
         normalizer
-      end
-    end
-
-    def remove_table_raw(name)
-      report(:remove_table, [name]) do
-        @client.request(:table_remove).
-          parameter(:name, name).
-          response
-      end
-    end
-
-    def remove_column_raw(table_name, column_name)
-      report(:remove_column, [table_name, column_name]) do
-        @client.request(:column_remove).
-          parameter(:table_name, table_name).
-          parameter(:name, column_name).
-          response
       end
     end
 

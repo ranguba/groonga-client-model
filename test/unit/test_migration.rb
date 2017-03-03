@@ -254,9 +254,9 @@ column_create posts content COLUMN_SCALAR LongText
    -> 0.0s
           REPORT
           expected_down_report = <<-REPORT
--- remove_table(:posts)
-   -> 0.0s
 -- remove_table(:terms)
+   -> 0.0s
+-- remove_table(:posts)
    -> 0.0s
           REPORT
           expected_dump = <<-DUMP.chomp
