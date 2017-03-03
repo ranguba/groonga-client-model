@@ -189,6 +189,33 @@ module GroongaClientModel
       end
     end
 
+    def set_config(key, value)
+      if @reverting
+        message = "can't revert set_config(#{key.inspect}, #{value.inspect})"
+        raise IrreversibleMigrationError, message
+      end
+
+      report(__method__, [key, value]) do
+        @client.request(:config_set).
+          parameter(:key, key).
+          parameter(:value, value).
+          response
+      end
+    end
+
+    def delete_config(key)
+      if @reverting
+        message = "can't revert delete_config(#{key.inspect})"
+        raise IrreversibleMigrationError, message
+      end
+
+      report(__method__, [key]) do
+        @client.request(:config_delete).
+          parameter(:key, key).
+          response
+      end
+    end
+
     private
     def puts(*args)
       if @output
