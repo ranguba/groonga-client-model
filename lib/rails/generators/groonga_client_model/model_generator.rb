@@ -22,14 +22,14 @@ require "groonga-client-model"
 module GroongaClientModel
   module Generators
     class ModelGenerator < Rails::Generators::NamedBase
+      check_class_collision
+
       source_root File.join(__dir__, "model", "templates")
 
       argument :attributes,
                type: :array,
                default: [],
                banner: "field[:type][:index] field[:type][:index]"
-
-      check_class_collision
 
       class_option :parent,
                    type: :string,

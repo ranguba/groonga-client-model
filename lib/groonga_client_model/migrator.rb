@@ -18,6 +18,12 @@ require "groonga_client_model/migration"
 
 module GroongaClientModel
   class Migrator
+    class << self
+      def next_migration_number(number)
+        [Time.now.utc.strftime("%Y%m%d%H%M%S"), "%.14d" % number].max
+      end
+    end
+
     def initialize(search_paths, target_version)
       @search_paths = Array(search_paths)
       @target_version = target_version

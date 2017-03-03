@@ -23,6 +23,27 @@ module GroongaClientModel
   class IrreversibleMigrationError < MigrationError
   end
 
+  class IllegalMigrationNameError < MigrationError
+    class << self
+      def validate(name)
+        case name
+        when /\A[_a-z0-9]+\z/
+          # OK
+        else
+          raise new(name)
+        end
+      end
+    end
+
+    attr_reader :name
+    def initialize(name)
+      @name = name
+      message = "Illegal name for migration file: #{name}\n"
+      message << "\t(only lower case letters, numbers, and '_' allowed)."
+      super(message)
+    end
+  end
+
   class Migration
     attr_accessor :output
 
