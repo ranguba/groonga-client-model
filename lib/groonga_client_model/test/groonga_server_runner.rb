@@ -43,7 +43,7 @@ module GroongaClientModel
 
         schema_path = base_dir + "db" + "schema.grn"
         if schema_path.exist?
-          schema_loader = SchemaLoader.new(base_dir)
+          schema_loader = SchemaLoader.new(schema_path)
           schema_loader.load
         else
           output = StringIO.new
