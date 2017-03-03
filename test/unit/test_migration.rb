@@ -68,7 +68,7 @@ class TestMigration < Test::Unit::TestCase
   sub_test_case("#create_table") do
     test("default") do
       expected_up_report = <<-REPORT
--- create_table(:posts, {:type=>"TABLE_NO_KEY", :key_type=>nil})
+-- create_table(:posts, {:type=>"TABLE_NO_KEY"})
    -> 0.0s
       REPORT
       expected_down_report = <<-REPORT
@@ -114,7 +114,7 @@ table_create terms TABLE_PAT_KEY ShortText
       sub_test_case("#short_text") do
         test("default") do
           expected_up_report = <<-REPORT
--- create_table(:posts, {:type=>"TABLE_NO_KEY", :key_type=>nil})
+-- create_table(:posts, {:type=>"TABLE_NO_KEY"})
    -> 0.0s
 -- add_column(:posts, :title, {:flags=>["COLUMN_SCALAR"], :value_type=>"ShortText"})
    -> 0.0s
@@ -142,7 +142,7 @@ column_create posts title COLUMN_SCALAR ShortText
       sub_test_case("#text") do
         test("default") do
           expected_up_report = <<-REPORT
--- create_table(:posts, {:type=>"TABLE_NO_KEY", :key_type=>nil})
+-- create_table(:posts, {:type=>"TABLE_NO_KEY"})
    -> 0.0s
 -- add_column(:posts, :content, {:flags=>["COLUMN_SCALAR"], :value_type=>"Text"})
    -> 0.0s
@@ -170,7 +170,7 @@ column_create posts content COLUMN_SCALAR Text
       sub_test_case("#long_text") do
         test("default") do
           expected_up_report = <<-REPORT
--- create_table(:posts, {:type=>"TABLE_NO_KEY", :key_type=>nil})
+-- create_table(:posts, {:type=>"TABLE_NO_KEY"})
    -> 0.0s
 -- add_column(:posts, :content, {:flags=>["COLUMN_SCALAR"], :value_type=>"LongText"})
    -> 0.0s

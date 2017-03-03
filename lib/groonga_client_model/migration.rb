@@ -59,7 +59,9 @@ module GroongaClientModel
         key_type ||= "ShortText"
       end
       key_type = normalize_type(key_type)
-      report(__method__, [name, type: type, key_type: key_type]) do
+      options = {type: type}
+      options[:key_type] = key_type if key_type
+      report(__method__, [name, options]) do
         @client.request(:table_create).
           parameter(:name, name).
           flags_parameter(:flags, [type]).
