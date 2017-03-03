@@ -62,7 +62,7 @@ module GroongaClientModel
 
       def application_groonga_record_file_name
         "app/models/application_groonga_record.rb"
-        end
+      end
     end
   end
 end
