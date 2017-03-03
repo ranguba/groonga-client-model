@@ -219,6 +219,10 @@ module GroongaClientModel
       def text(column_name, options={})
         @migration.add_column(@table_name, column_name, :text, options)
       end
+
+      def long_text(column_name, options={})
+        @migration.add_column(@table_name, column_name, :long_text, options)
+      end
     end
   end
 end
