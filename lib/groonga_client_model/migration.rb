@@ -55,7 +55,8 @@ module GroongaClientModel
                      type: nil,
                      key_type: nil,
                      tokenizer: nil,
-                     default_tokenizer: nil)
+                     default_tokenizer: nil,
+                     normalizer: nil)
       return remove_table_raw(name) if @reverting
 
       type = normalize_table_type(type || :array)
@@ -66,16 +67,19 @@ module GroongaClientModel
       if type != "TABLE_NO_KEY" and key_type == "ShortText"
         tokenizer ||= default_tokenizer
         tokenizer = normalize_tokenizer(tokenizer)
+        normalizer = normalize_normalizer(normalizer)
       end
       options = {type: type}
       options[:key_type] = key_type if key_type
       options[:tokenizer] = tokenizer if tokenizer
+      options[:normalizer] = normalizer if normalizer
       report(__method__, [name, options]) do
         @client.request(:table_create).
           parameter(:name, name).
           flags_parameter(:flags, [type]).
           parameter(:key_type, key_type).
           parameter(:default_tokenizer, tokenizer).
+          parameter(:normalizer, normalizer).
           response
       end
 
@@ -211,6 +215,15 @@ module GroongaClientModel
         "TokenMecab"
       else
         tokenizer
+      end
+    end
+
+    def normalize_normalizer(normalizer)
+      case normalizer.to_s
+      when /\A(?:normalizer_?)?auto\z/i
+        "NormalizerAuto"
+      else
+        normalizer
       end
     end
 
