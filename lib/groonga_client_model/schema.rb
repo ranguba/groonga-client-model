@@ -70,6 +70,14 @@ module GroongaClientModel
         Columns.new(@raw_schema, @raw_table.columns.merge(raw_columns))
       end
 
+      def tokenizer
+        @raw_table.tokenizer
+      end
+
+      def normalizer
+        @raw_table.normalizer
+      end
+
       private
       def create_pseudo_column(name, value_type)
         raw_column = {

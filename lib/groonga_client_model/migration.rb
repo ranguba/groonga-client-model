@@ -94,25 +94,38 @@ module GroongaClientModel
       remove_table_raw(name)
     end
 
-    def add_column(table_name, column_name, value_type, options={})
+    def add_column(table_name, column_name, value_type,
+                   flags: nil,
+                   type: nil,
+                   sources: nil,
+                   source: nil)
       return remove_column_raw(name) if @reverting
 
       value_type = normalize_type(value_type)
-      flags = []
-      flags << normalize_column_type(options[:type] || :scalar)
-      arguments = [
-        table_name,
-        column_name,
+      type = normalize_column_type(type || :scalar)
+      flags = Array(flags) | [type]
+      if type == "COLUMN_INDEX"
+        schema = GroongaClientModel::Schema.new
+        case schema.tables[table_name].tokenizer
+        when nil, "TokenDelimit"
+          # do nothing
+        else
+          flags << "WITH_POSITION"
+        end
+      end
+      sources ||= source
+      options = {
         flags: flags,
         value_type: value_type,
-      ]
-      report(__method__, arguments) do
+      }
+      options[:sources] = sources unless sources.blank?
+      report(__method__, [table_name, column_name, options]) do
         @client.request(:column_create).
           parameter(:table, table_name).
           parameter(:name, column_name).
           flags_parameter(:flags, flags).
           parameter(:type, value_type).
-          values_parameter(:source, options[:source]).
+          values_parameter(:source, sources).
           response
       end
     end
@@ -260,6 +273,16 @@ module GroongaClientModel
 
       def long_text(column_name, options={})
         @migration.add_column(@table_name, column_name, :long_text, options)
+      end
+
+      def index(source_table_name, source_column_names, options={})
+        source_column_names = Array(source_column_names)
+        column_name = [source_table_name, *source_column_names].join("_")
+        @migration.add_column(@table_name,
+                              column_name,
+                              source_table_name,
+                              options.merge(:type => :index,
+                                            :sources => source_column_names))
       end
     end
   end
