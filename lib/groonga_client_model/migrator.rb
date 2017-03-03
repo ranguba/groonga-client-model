@@ -24,7 +24,10 @@ module GroongaClientModel
       end
     end
 
+    attr_accessor :output
+
     def initialize(search_paths, target_version)
+      @output = nil
       @search_paths = Array(search_paths)
       @target_version = target_version
       ensure_versions
@@ -35,6 +38,7 @@ module GroongaClientModel
       each do |definition|
         Client.open do |client|
           migration = definition.create_migration(client)
+          migration.output = @output
           report(definition) do
             if forward?
               migration.up
@@ -74,6 +78,14 @@ module GroongaClientModel
     end
 
     private
+    def puts(*args)
+      if @output
+        @output.puts(*args)
+      else
+        super
+      end
+    end
+
     def version_table_name
       "schema_versions"
     end

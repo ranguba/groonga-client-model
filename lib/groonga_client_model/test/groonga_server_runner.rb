@@ -16,9 +16,12 @@
 
 require "pathname"
 require "socket"
+require "stringio"
 require "uri"
 
 require "groonga/client/test/groonga-server-runner"
+
+require "groonga_client_model/migrator"
 
 module GroongaClientModel
   module Test
@@ -37,8 +40,18 @@ module GroongaClientModel
         else
           base_dir = Pathname.pwd
         end
-        schema_loader = SchemaLoader.new(base_dir)
-        schema_loader.load
+
+        schema_path = base_dir + "db" + "schema.grn"
+        if schema_path.exist?
+          schema_loader = SchemaLoader.new(base_dir)
+          schema_loader.load
+        else
+          output = StringIO.new
+          migrator = Migrator.new(base_dir + "db" + "groonga" + "migrate",
+                                  nil)
+          migrator.output = output
+          migrator.migrate
+        end
       end
 
       def url

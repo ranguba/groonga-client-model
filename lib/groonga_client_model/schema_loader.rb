@@ -18,20 +18,17 @@ require "groonga/command/parser"
 
 module GroongaClientModel
   class SchemaLoader
-    def initialize(base_dir)
-      @base_dir = base_dir
+    def initialize(schema_path)
+      @schema_path = schema_path
     end
 
     def load
-      schema_path = @base_dir + "db" + "schema.grn"
-      return unless schema_path.exist?
-
       Client.open do |client|
         parser = Groonga::Command::Parser.new
         parser.on_command do |command|
           client.execute(command)
         end
-        schema_path.open do |schema_file|
+        @schema_path.open do |schema_file|
           schema_file.each_line do |line|
             parser << line
           end
