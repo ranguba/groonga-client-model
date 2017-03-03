@@ -51,7 +51,11 @@ module GroongaClientModel
       end
     end
 
-    def create_table(name, type: nil, key_type: nil)
+    def create_table(name,
+                     type: nil,
+                     key_type: nil,
+                     tokenizer: nil,
+                     default_tokenizer: nil)
       return remove_table_raw(name) if @reverting
 
       type = normalize_table_type(type || :array)
@@ -59,13 +63,19 @@ module GroongaClientModel
         key_type ||= "ShortText"
       end
       key_type = normalize_type(key_type)
+      if type != "TABLE_NO_KEY" and key_type == "ShortText"
+        tokenizer ||= default_tokenizer
+        tokenizer = normalize_tokenizer(tokenizer)
+      end
       options = {type: type}
       options[:key_type] = key_type if key_type
+      options[:tokenizer] = tokenizer if tokenizer
       report(__method__, [name, options]) do
         @client.request(:table_create).
           parameter(:name, name).
           flags_parameter(:flags, [type]).
           parameter(:key_type, key_type).
+          parameter(:default_tokenizer, tokenizer).
           response
       end
 
@@ -188,6 +198,19 @@ module GroongaClientModel
         "WGS84GeoPoint"
       else
         type
+      end
+    end
+
+    def normalize_tokenizer(tokenizer)
+      case tokenizer.to_s
+      when /\A(?:token_?)?bigram\z/i
+        "TokenBigram"
+      when /\A(?:token_?)?delimit\z/i
+        "TokenDelimit"
+      when /\A(?:token_?)?mecab\z/i
+        "TokenMecab"
+      else
+        tokenizer
       end
     end
 
