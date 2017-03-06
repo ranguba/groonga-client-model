@@ -65,8 +65,8 @@ module GroongaClientModel
       end
 
       def find(id)
-        if id.respond_to?(:_id)
-          id = id._id
+        if id.respond_to?(:id)
+          id = id.id
         end
         record = select.filter("_id == %{id}", id: id).limit(1).first
         if record.nil?
