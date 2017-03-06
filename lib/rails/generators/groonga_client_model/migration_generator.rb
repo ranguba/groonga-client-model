@@ -52,16 +52,17 @@ module GroongaClientModel
 
       def create_migration_file
         IllegalMigrationNameError.validate(file_name)
-        decide_template
+        decide_template(file_name)
         migration_template(@migration_template,
                            File.join("db/groonga/migrate", "#{file_name}.rb"))
       end
 
       private
-      def decide_template
+      def decide_template(output_file_name)
         @migration_template = "migration.rb"
+        @migration_action = nil
         @key_type = nil
-        case file_name
+        case output_file_name
         when /\A(add|remove)_.*_(?:to|from)_(.*)\z/
           @migration_action = $1
           @table_name = normalize_table_name($2)

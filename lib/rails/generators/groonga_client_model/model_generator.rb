@@ -36,6 +36,19 @@ module GroongaClientModel
                    desc: "The parent class for the generated model"
 
       hook_for :test_framework
+      hook_for :migration do |klass|
+        args = ["create_#{table_name}"]
+        attributes.each do |attribute|
+          arg = "#{attribute.name}:#{attribute.type}"
+          if attribute.has_uniq_index?
+            arg << ":unique"
+          elsif attribute.has_index?
+            arg << ":index"
+          end
+          args << arg
+        end
+        invoke(klass, args)
+      end
 
       def create_model_file
         generate_application_groonga_record

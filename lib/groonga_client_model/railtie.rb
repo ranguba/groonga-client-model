@@ -22,7 +22,9 @@ module GroongaClientModel
     config.groonga_client_model = ActiveSupport::OrderedOptions.new
 
     unless config.app_generators.rails[:orm]
-      config.app_generators.orm(:groonga_client_model)
+      config.app_generators.orm(:groonga_client_model,
+                                migration: true,
+                                timestamps: true)
     end
 
     config.action_dispatch.rescue_responses.merge!(
