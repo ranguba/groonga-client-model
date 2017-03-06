@@ -63,9 +63,12 @@ module GroongaClientModel
         @migration_action = nil
         @key_type = nil
         case output_file_name
-        when /\A(add|remove)_.*_(?:to|from)_(.*)\z/
-          @migration_action = $1
-          @table_name = normalize_table_name($2)
+        when /\Aadd_.*_to_(.*)\z/
+          @migration_action = :add
+          @table_name = normalize_table_name($1)
+        when /\Aremove_.*_from_(.*)\z/
+          @migration_action = :remove
+          @table_name = normalize_table_name($1)
         when /\Acreate_(.+)\z/
           @table_name = normalize_table_name($1)
           @migration_template = "create_table_migration.rb"
@@ -75,6 +78,12 @@ module GroongaClientModel
               break
             end
           end
+        when /\Aset_config_(.*)\z/
+          @migration_template = "set_config_migration.rb"
+          @config_key = normalize_config_key($1)
+        when /\Adelete_config_(.*)\z/
+          @migration_template = "delete_config_migration.rb"
+          @config_key = normalize_config_key($1)
         end
       end
 
@@ -98,6 +107,10 @@ module GroongaClientModel
         attributes.reject do |attribute|
           attribute.name == "_key"
         end
+      end
+
+      def normalize_config_key(key)
+        key.gsub(/_/, ".")
       end
     end
   end
