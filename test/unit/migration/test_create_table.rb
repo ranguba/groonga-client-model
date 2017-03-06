@@ -238,6 +238,14 @@ column_create posts #{column_name} COLUMN_SCALAR #{groonga_type}
       end
     end
 
+    sub_test_case("#time") do
+      test("default") do
+        assert_migrate_add_column(:published_at, "Time") do |table|
+          table.time(:published_at)
+        end
+      end
+    end
+
     sub_test_case("#short_text") do
       test("default") do
         assert_migrate_add_column(:title, "ShortText") do |table|
