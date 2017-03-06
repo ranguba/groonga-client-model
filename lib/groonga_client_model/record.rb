@@ -65,6 +65,9 @@ module GroongaClientModel
       end
 
       def find(id)
+        if id.respond_to?(:_id)
+          id = id._id
+        end
         record = select.filter("_id == %{id}", id: id).limit(1).first
         if record.nil?
           raise RecordNotFound.new("Record not found: _id: <#{id}>")
