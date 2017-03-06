@@ -264,6 +264,8 @@ module GroongaClientModel
     def upsert_raw(validate: true)
       return false unless upsert_sub_records(validate: validate)
 
+      update_timestamps
+
       Client.open do |client|
         table = self.class.schema.tables[self.class.table_name]
         load_value_generator = LoadValueGenerator.new(self)
@@ -367,6 +369,20 @@ module GroongaClientModel
       else
         return nil if value["_key"].blank?
         sub_record_class.new(value)
+      end
+    end
+
+    def update_timestamps
+      now = Time.now
+
+      if new_record?
+        [:created_at, :created_on].each do |attribute|
+          __send__("#{attribute}=", now) if respond_to?("#{attribute}=")
+        end
+      end
+
+      [:updated_at, :updated_on].each do |attribute|
+        __send__("#{attribute}=", now) if respond_to?("#{attribute}=")
       end
     end
   end

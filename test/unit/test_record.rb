@@ -342,4 +342,69 @@ class TestRecord < Test::Unit::TestCase
       end
     end
   end
+
+  sub_test_case("timestamps") do
+    include GroongaClientModel::TestHelper
+
+    setup do
+      schema = <<-SCHEMA
+table_create timestamps TABLE_NO_KEY
+column_create timestamps created_at COLUMN_SCALAR Time
+column_create timestamps created_on COLUMN_SCALAR Time
+column_create timestamps updated_at COLUMN_SCALAR Time
+column_create timestamps updated_on COLUMN_SCALAR Time
+      SCHEMA
+      schema_loader = GroongaClientModel::SchemaLoader.new(schema)
+      schema_loader.load
+    end
+
+    class Timestamp < GroongaClientModel::Record
+    end
+
+    test("created_at") do
+      now = Time.now
+      timestamp = Timestamp.new
+      timestamp.save
+      saved_timestamp = Timestamp.find(timestamp._id)
+      assert do
+        saved_timestamp.created_at > now
+      end
+    end
+
+    test("created_on") do
+      now = Time.now
+      timestamp = Timestamp.new
+      timestamp.save
+      saved_timestamp = Timestamp.find(timestamp._id)
+      assert do
+        saved_timestamp.created_on > now
+      end
+    end
+
+    test("updated_at") do
+      timestamp = Timestamp.new
+      timestamp.save
+      saved_timestamp = Timestamp.find(timestamp._id)
+      created_at = saved_timestamp.created_at
+      saved_timestamp.save
+      updated_timestamp = Timestamp.find(timestamp._id)
+      updated_timestamp.save
+      assert do
+        saved_timestamp.updated_at > created_at
+      end
+    end
+
+    test("updated_on") do
+      timestamp = Timestamp.new
+      timestamp.save
+      saved_timestamp = Timestamp.find(timestamp._id)
+      created_on = saved_timestamp.created_on
+      saved_timestamp.save
+      updated_timestamp = Timestamp.find(timestamp._id)
+      updated_timestamp.save
+      assert do
+        saved_timestamp.updated_on > created_on
+      end
+    end
+  end
 end
