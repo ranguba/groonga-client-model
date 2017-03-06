@@ -132,204 +132,124 @@ table_create terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --nor
   end
 
   sub_test_case("columns") do
-    sub_test_case("#boolean") do
-      test("default") do
-        expected_up_report = <<-REPORT
+    def assert_migrate_add_column(column_name,
+                                  groonga_type,
+                                  options={})
+      expected_up_report = <<-REPORT
 -- create_table(:posts, {:type=>"TABLE_NO_KEY"})
    -> 0.0s
--- add_column(:posts, :published, {:flags=>["COLUMN_SCALAR"], :value_type=>"Bool"})
+-- add_column(:posts, :#{column_name}, {:flags=>["COLUMN_SCALAR"], :value_type=>"#{groonga_type}"})
    -> 0.0s
-        REPORT
-        expected_down_report = <<-REPORT
+      REPORT
+      expected_down_report = <<-REPORT
 -- remove_table(:posts)
    -> 0.0s
-        REPORT
-        expected_dump = <<-DUMP.chomp
+      REPORT
+      expected_dump = <<-DUMP.chomp
 table_create posts TABLE_NO_KEY
-column_create posts published COLUMN_SCALAR Bool
-        DUMP
-        assert_migrate(expected_up_report,
-                       expected_down_report,
-                       expected_dump) do |migration|
-          migration.instance_eval do
-            create_table(:posts) do |table|
-              table.boolean(:published)
-            end
+column_create posts #{column_name} COLUMN_SCALAR #{groonga_type}
+      DUMP
+      assert_migrate(expected_up_report,
+                     expected_down_report,
+                     expected_dump) do |migration|
+        migration.instance_eval do
+          create_table(:posts) do |table|
+            yield(table)
           end
+        end
+      end
+    end
+
+    sub_test_case("#boolean") do
+      test("default") do
+        assert_migrate_add_column(:published, "Bool") do |table|
+          table.boolean(:published)
         end
       end
 
       test("#bool alias") do
-        expected_up_report = <<-REPORT
--- create_table(:posts, {:type=>"TABLE_NO_KEY"})
-   -> 0.0s
--- add_column(:posts, :published, {:flags=>["COLUMN_SCALAR"], :value_type=>"Bool"})
-   -> 0.0s
-        REPORT
-        expected_down_report = <<-REPORT
--- remove_table(:posts)
-   -> 0.0s
-        REPORT
-        expected_dump = <<-DUMP.chomp
-table_create posts TABLE_NO_KEY
-column_create posts published COLUMN_SCALAR Bool
-        DUMP
-        assert_migrate(expected_up_report,
-                       expected_down_report,
-                       expected_dump) do |migration|
-          migration.instance_eval do
-            create_table(:posts) do |table|
-              table.bool(:published)
-            end
-          end
+        assert_migrate_add_column(:published, "Bool") do |table|
+          table.bool(:published)
         end
       end
     end
 
     sub_test_case("#integer") do
-      def assert_migrate_integer(type, options)
-        expected_up_report = <<-REPORT
--- create_table(:posts, {:type=>"TABLE_NO_KEY"})
-   -> 0.0s
--- add_column(:posts, :score, {:flags=>["COLUMN_SCALAR"], :value_type=>"#{type}"})
-   -> 0.0s
-        REPORT
-        expected_down_report = <<-REPORT
--- remove_table(:posts)
-   -> 0.0s
-        REPORT
-        expected_dump = <<-DUMP.chomp
-table_create posts TABLE_NO_KEY
-column_create posts score COLUMN_SCALAR #{type}
-        DUMP
-        assert_migrate(expected_up_report,
-                       expected_down_report,
-                       expected_dump) do |migration|
-          migration.instance_eval do
-            create_table(:posts) do |table|
-              table.integer(:score, options)
-            end
-          end
+      test("default") do
+        assert_migrate_add_column(:score, "Int32") do |table|
+          table.integer(:score)
         end
       end
 
-      test("default") do
-        assert_migrate_integer("Int32", {})
-      end
-
       test("bit: 8") do
-        assert_migrate_integer("Int8", bit: 8)
+        assert_migrate_add_column(:score, "Int8") do |table|
+          table.integer(:score, bit: 8)
+        end
       end
 
       test("bit: 16") do
-        assert_migrate_integer("Int16", bit: 16)
+        assert_migrate_add_column(:score, "Int16") do |table|
+          table.integer(:score, bit: 16)
+        end
       end
 
       test("bit: 32") do
-        assert_migrate_integer("Int32", bit: 32)
+        assert_migrate_add_column(:score, "Int32") do |table|
+          table.integer(:score, bit: 32)
+        end
       end
 
       test("bit: 64") do
-        assert_migrate_integer("Int64", bit: 64)
+        assert_migrate_add_column(:score, "Int64") do |table|
+          table.integer(:score, bit: 64)
+        end
       end
 
       test("bit: 8, unsigned: true") do
-        assert_migrate_integer("UInt8", bit: 8, unsigned: true)
+        assert_migrate_add_column(:score, "UInt8") do |table|
+          table.integer(:score, bit: 8, unsigned: true)
+        end
       end
 
       test("bit: 16, unsigned: true") do
-        assert_migrate_integer("UInt16", bit: 16, unsigned: true)
+        assert_migrate_add_column(:score, "UInt16") do |table|
+          table.integer(:score, bit: 16, unsigned: true)
+        end
       end
 
       test("bit: 32, unsigned: true") do
-        assert_migrate_integer("UInt32", bit: 32, unsigned: true)
+        assert_migrate_add_column(:score, "UInt32") do |table|
+          table.integer(:score, bit: 32, unsigned: true)
+        end
       end
 
       test("bit: 64, unsigned: true") do
-        assert_migrate_integer("UInt64", bit: 64, unsigned: true)
+        assert_migrate_add_column(:score, "UInt64") do |table|
+          table.integer(:score, bit: 64, unsigned: true)
+        end
       end
     end
 
     sub_test_case("#short_text") do
       test("default") do
-        expected_up_report = <<-REPORT
--- create_table(:posts, {:type=>"TABLE_NO_KEY"})
-   -> 0.0s
--- add_column(:posts, :title, {:flags=>["COLUMN_SCALAR"], :value_type=>"ShortText"})
-   -> 0.0s
-        REPORT
-        expected_down_report = <<-REPORT
--- remove_table(:posts)
-   -> 0.0s
-        REPORT
-        expected_dump = <<-DUMP.chomp
-table_create posts TABLE_NO_KEY
-column_create posts title COLUMN_SCALAR ShortText
-        DUMP
-        assert_migrate(expected_up_report,
-                       expected_down_report,
-                       expected_dump) do |migration|
-          migration.instance_eval do
-            create_table(:posts) do |table|
-              table.short_text(:title)
-            end
-          end
+        assert_migrate_add_column(:title, "ShortText") do |table|
+          table.short_text(:title)
         end
       end
     end
 
     sub_test_case("#text") do
       test("default") do
-        expected_up_report = <<-REPORT
--- create_table(:posts, {:type=>"TABLE_NO_KEY"})
-   -> 0.0s
--- add_column(:posts, :content, {:flags=>["COLUMN_SCALAR"], :value_type=>"Text"})
-   -> 0.0s
-        REPORT
-        expected_down_report = <<-REPORT
--- remove_table(:posts)
-   -> 0.0s
-        REPORT
-        expected_dump = <<-DUMP.chomp
-table_create posts TABLE_NO_KEY
-column_create posts content COLUMN_SCALAR Text
-        DUMP
-        assert_migrate(expected_up_report,
-                       expected_down_report,
-                       expected_dump) do |migration|
-          migration.instance_eval do
-            create_table(:posts) do |table|
-              table.text(:content)
-            end
-          end
+        assert_migrate_add_column(:content, "Text") do |table|
+          table.text(:content)
         end
       end
     end
 
     sub_test_case("#long_text") do
       test("default") do
-        expected_up_report = <<-REPORT
--- create_table(:posts, {:type=>"TABLE_NO_KEY"})
-   -> 0.0s
--- add_column(:posts, :content, {:flags=>["COLUMN_SCALAR"], :value_type=>"LongText"})
-   -> 0.0s
-        REPORT
-        expected_down_report = <<-REPORT
--- remove_table(:posts)
-   -> 0.0s
-        REPORT
-        expected_dump = <<-DUMP.chomp
-table_create posts TABLE_NO_KEY
-column_create posts content COLUMN_SCALAR LongText
-        DUMP
-        assert_migrate(expected_up_report,
-                       expected_down_report,
-                       expected_dump) do |migration|
-          migration.instance_eval do
-            create_table(:posts) do |table|
-              table.long_text(:content)
-            end
-          end
+        assert_migrate_add_column(:content, "LongText") do |table|
+          table.long_text(:content)
         end
       end
     end
