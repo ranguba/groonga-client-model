@@ -363,8 +363,7 @@ column_create timestamps updated_on COLUMN_SCALAR Time
 
     test("created_at") do
       now = Time.now
-      timestamp = Timestamp.new
-      timestamp.save
+      timestamp = Timestamp.create
       saved_timestamp = Timestamp.find(timestamp._id)
       assert do
         saved_timestamp.created_at > now
@@ -373,8 +372,7 @@ column_create timestamps updated_on COLUMN_SCALAR Time
 
     test("created_on") do
       now = Time.now
-      timestamp = Timestamp.new
-      timestamp.save
+      timestamp = Timestamp.create
       saved_timestamp = Timestamp.find(timestamp._id)
       assert do
         saved_timestamp.created_on > now
@@ -382,8 +380,7 @@ column_create timestamps updated_on COLUMN_SCALAR Time
     end
 
     test("updated_at") do
-      timestamp = Timestamp.new
-      timestamp.save
+      timestamp = Timestamp.create
       saved_timestamp = Timestamp.find(timestamp._id)
       created_at = saved_timestamp.created_at
       saved_timestamp.save
@@ -395,8 +392,7 @@ column_create timestamps updated_on COLUMN_SCALAR Time
     end
 
     test("updated_on") do
-      timestamp = Timestamp.new
-      timestamp.save
+      timestamp = Timestamp.create
       saved_timestamp = Timestamp.find(timestamp._id)
       created_on = saved_timestamp.created_on
       saved_timestamp.save
