@@ -167,7 +167,7 @@ column_create posts #{column_name} COLUMN_SCALAR #{groonga_type}
         end
       end
 
-      test("#bool alias") do
+      test("alias: #bool") do
         assert_migrate_add_column(:published, "Bool") do |table|
           table.bool(:published)
         end
@@ -266,6 +266,38 @@ column_create posts #{column_name} COLUMN_SCALAR #{groonga_type}
       test("default") do
         assert_migrate_add_column(:content, "LongText") do |table|
           table.long_text(:content)
+        end
+      end
+    end
+
+    sub_test_case("#geo_point") do
+      test("default") do
+        assert_migrate_add_column(:location, "WGS84GeoPoint") do |table|
+          table.geo_point(:location)
+        end
+      end
+
+      test("datum: :wgs84") do
+        assert_migrate_add_column(:location, "WGS84GeoPoint") do |table|
+          table.geo_point(:location, datum: :wgs84)
+        end
+      end
+
+      test("datum: :tokyo") do
+        assert_migrate_add_column(:location, "TokyoGeoPoint") do |table|
+          table.geo_point(:location, datum: :tokyo)
+        end
+      end
+
+      test("alias: #wgs84_geo_point") do
+        assert_migrate_add_column(:location, "WGS84GeoPoint") do |table|
+          table.wgs84_geo_point(:location)
+        end
+      end
+
+      test("alias: #tokyo_geo_point") do
+        assert_migrate_add_column(:location, "TokyoGeoPoint") do |table|
+          table.tokyo_geo_point(:location)
         end
       end
     end

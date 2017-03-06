@@ -360,6 +360,30 @@ module GroongaClientModel
         @migration.add_column(@table_name, column_name, :long_text, options)
       end
 
+      def geo_point(column_name, options={})
+        options = options.dup
+        datum = options.delete(:datum) || :wgs84
+        case datum
+        when :wgs84
+          type = "WGS84GeoPoint"
+        when :tokyo
+          type = "TokyoGeoPoint"
+        else
+          message = "invalid geodetic datum: "
+          message << "available: [:wgs84, :tokyo]: #{datum.inspect}"
+          raise ArgumentError, message
+        end
+        @migration.add_column(@table_name, column_name, type, options)
+      end
+
+      def wgs84_geo_point(column_name, options={})
+        geo_point(column_name, options.merge(datum: :wgs84))
+      end
+
+      def tokyo_geo_point(column_name, options={})
+        geo_point(column_name, options.merge(datum: :tokyo))
+      end
+
       def index(source_table_name, source_column_names, options={})
         source_column_names = Array(source_column_names)
         column_name = [source_table_name, *source_column_names].join("_")
