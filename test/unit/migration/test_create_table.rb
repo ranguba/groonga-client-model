@@ -158,6 +158,32 @@ column_create posts published COLUMN_SCALAR Bool
           end
         end
       end
+
+      test("#bool alias") do
+        expected_up_report = <<-REPORT
+-- create_table(:posts, {:type=>"TABLE_NO_KEY"})
+   -> 0.0s
+-- add_column(:posts, :published, {:flags=>["COLUMN_SCALAR"], :value_type=>"Bool"})
+   -> 0.0s
+        REPORT
+        expected_down_report = <<-REPORT
+-- remove_table(:posts)
+   -> 0.0s
+        REPORT
+        expected_dump = <<-DUMP.chomp
+table_create posts TABLE_NO_KEY
+column_create posts published COLUMN_SCALAR Bool
+        DUMP
+        assert_migrate(expected_up_report,
+                       expected_down_report,
+                       expected_dump) do |migration|
+          migration.instance_eval do
+            create_table(:posts) do |table|
+              table.bool(:published)
+            end
+          end
+        end
+      end
     end
 
     sub_test_case("#short_text") do
