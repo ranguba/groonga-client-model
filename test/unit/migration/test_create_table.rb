@@ -186,6 +186,70 @@ column_create posts published COLUMN_SCALAR Bool
       end
     end
 
+    sub_test_case("#integer") do
+      def assert_migrate_integer(type, options)
+        expected_up_report = <<-REPORT
+-- create_table(:posts, {:type=>"TABLE_NO_KEY"})
+   -> 0.0s
+-- add_column(:posts, :score, {:flags=>["COLUMN_SCALAR"], :value_type=>"#{type}"})
+   -> 0.0s
+        REPORT
+        expected_down_report = <<-REPORT
+-- remove_table(:posts)
+   -> 0.0s
+        REPORT
+        expected_dump = <<-DUMP.chomp
+table_create posts TABLE_NO_KEY
+column_create posts score COLUMN_SCALAR #{type}
+        DUMP
+        assert_migrate(expected_up_report,
+                       expected_down_report,
+                       expected_dump) do |migration|
+          migration.instance_eval do
+            create_table(:posts) do |table|
+              table.integer(:score, options)
+            end
+          end
+        end
+      end
+
+      test("default") do
+        assert_migrate_integer("Int32", {})
+      end
+
+      test("bit: 8") do
+        assert_migrate_integer("Int8", bit: 8)
+      end
+
+      test("bit: 16") do
+        assert_migrate_integer("Int16", bit: 16)
+      end
+
+      test("bit: 32") do
+        assert_migrate_integer("Int32", bit: 32)
+      end
+
+      test("bit: 64") do
+        assert_migrate_integer("Int64", bit: 64)
+      end
+
+      test("bit: 8, unsigned: true") do
+        assert_migrate_integer("UInt8", bit: 8, unsigned: true)
+      end
+
+      test("bit: 16, unsigned: true") do
+        assert_migrate_integer("UInt16", bit: 16, unsigned: true)
+      end
+
+      test("bit: 32, unsigned: true") do
+        assert_migrate_integer("UInt32", bit: 32, unsigned: true)
+      end
+
+      test("bit: 64, unsigned: true") do
+        assert_migrate_integer("UInt64", bit: 64, unsigned: true)
+      end
+    end
+
     sub_test_case("#short_text") do
       test("default") do
         expected_up_report = <<-REPORT

@@ -328,6 +328,18 @@ module GroongaClientModel
       end
       alias_method :bool, :boolean
 
+      def integer(column_name, options={})
+        options = options.dup
+        bit = options.delete(:bit) || 32
+        unsigned = options.delete(:unsigned)
+        if unsigned
+          type = "uint#{bit}"
+        else
+          type = "int#{bit}"
+        end
+        @migration.add_column(@table_name, column_name, type, options)
+      end
+
       def short_text(column_name, options={})
         @migration.add_column(@table_name, column_name, :short_text, options)
       end
