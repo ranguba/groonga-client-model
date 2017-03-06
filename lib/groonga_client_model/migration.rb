@@ -323,6 +323,11 @@ module GroongaClientModel
         @table_name = table_name
       end
 
+      def boolean(column_name, options={})
+        @migration.add_column(@table_name, column_name, :bool, options)
+      end
+      alias_method :bool, :boolean
+
       def short_text(column_name, options={})
         @migration.add_column(@table_name, column_name, :short_text, options)
       end
