@@ -21,7 +21,7 @@ module GroongaClientModel
   class Railtie < Rails::Railtie
     config.groonga_client_model = ActiveSupport::OrderedOptions.new
 
-    if config.app_generators.orm.empty?
+    unless config.app_generators.rails[:orm]
       config.app_generators.orm(:groonga_client_model)
     end
 
