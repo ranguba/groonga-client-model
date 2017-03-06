@@ -230,6 +230,14 @@ column_create posts #{column_name} COLUMN_SCALAR #{groonga_type}
       end
     end
 
+    sub_test_case("#float") do
+      test("default") do
+        assert_migrate_add_column(:score, "Float") do |table|
+          table.float(:score)
+        end
+      end
+    end
+
     sub_test_case("#short_text") do
       test("default") do
         assert_migrate_add_column(:title, "ShortText") do |table|

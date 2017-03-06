@@ -340,6 +340,10 @@ module GroongaClientModel
         @migration.add_column(@table_name, column_name, type, options)
       end
 
+      def float(column_name, options={})
+        @migration.add_column(@table_name, column_name, :float, options)
+      end
+
       def short_text(column_name, options={})
         @migration.add_column(@table_name, column_name, :short_text, options)
       end
