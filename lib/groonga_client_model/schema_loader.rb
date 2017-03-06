@@ -18,8 +18,8 @@ require "groonga/command/parser"
 
 module GroongaClientModel
   class SchemaLoader
-    def initialize(schema_path)
-      @schema_path = schema_path
+    def initialize(schema)
+      @schema = schema
     end
 
     def load
@@ -28,10 +28,8 @@ module GroongaClientModel
         parser.on_command do |command|
           client.execute(command)
         end
-        @schema_path.open do |schema_file|
-          schema_file.each_line do |line|
-            parser << line
-          end
+        @schema.each_line do |line|
+          parser << line
         end
         parser.finish
       end
