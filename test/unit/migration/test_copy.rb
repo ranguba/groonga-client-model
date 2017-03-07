@@ -78,4 +78,40 @@ load --table posts
       end
     end
   end
+
+  test("#copy_column") do
+    expected_up_report = <<-REPORT
+-- copy_column("posts.content", "entries.content")
+   -> 0.0s
+    REPORT
+    expected_down_report = nil
+    expected_dump = <<-DUMP.chomp
+table_create entries TABLE_PAT_KEY ShortText
+column_create entries content COLUMN_SCALAR LongText
+
+table_create posts TABLE_HASH_KEY ShortText
+column_create posts content COLUMN_SCALAR Text
+
+load --table entries
+[
+["_key","content"],
+["Groonga","Very good!"],
+["Ruby","Very exciting!"]
+]
+
+load --table posts
+[
+["_key","content"],
+["Groonga","Very good!"],
+["Ruby","Very exciting!"]
+]
+    DUMP
+    assert_migrate(expected_up_report,
+                   expected_down_report,
+                   expected_dump) do |migration|
+      migration.instance_eval do
+        copy_column("posts.content", "entries.content")
+      end
+    end
+  end
 end

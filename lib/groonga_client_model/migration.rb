@@ -204,6 +204,26 @@ module GroongaClientModel
       end
     end
 
+    def copy_column(from_full_column_name,
+                    to_full_column_name)
+      if @reverting
+        message = "can't revert copy_column"
+        message << "(#{from_full_column_name}, #{to_full_column_name})"
+        raise IrreversibleMigrationError, message
+      end
+
+      from_table_name, from_column_name = from_full_column_name.split(".", 2)
+      to_table_name, to_column_name = to_full_column_name.split(".", 2)
+      report(__method__, [from_full_column_name, to_full_column_name]) do
+        @client.request(:column_copy).
+          parameter(:from_table, from_table_name).
+          parameter(:from_name, from_column_name).
+          parameter(:to_table, to_table_name).
+          parameter(:to_name, to_column_name).
+          response
+      end
+    end
+
     def set_config(key, value)
       if @reverting
         message = "can't revert set_config(#{key.inspect}, #{value.inspect})"
