@@ -77,7 +77,6 @@ module TestHelper
         end
         assert_equal(expected_dump, dump)
       end
-
     end
   end
 end
