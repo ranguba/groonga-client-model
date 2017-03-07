@@ -59,12 +59,12 @@ end
     assert_migration("db/groonga/migrate/set_config_alias_column.rb", <<-MIGRATION)
 class SetConfigAliasColumn < GroongaClientModel::Migration
   def up
-    config_set "alias.column", "new value"
+    set_config "alias.column", "new value"
   end
 
   def down
-    # config_set "alias.column", "old value"
-    # config_delete "alias.column"
+    # set_config "alias.column", "old value"
+    # delete_config "alias.column"
   end
 end
     MIGRATION
@@ -75,12 +75,12 @@ end
     assert_migration("db/groonga/migrate/set_config_alias_column.rb", <<-MIGRATION)
 class SetConfigAliasColumn < GroongaClientModel::Migration
   def up
-    config_set "alias.column", "aliases.real_name"
+    set_config "alias.column", "aliases.real_name"
   end
 
   def down
-    # config_set "alias.column", "old value"
-    # config_delete "alias.column"
+    # set_config "alias.column", "old value"
+    # delete_config "alias.column"
   end
 end
     MIGRATION
@@ -91,11 +91,11 @@ end
     assert_migration("db/groonga/migrate/delete_config_alias_column.rb", <<-MIGRATION)
 class DeleteConfigAliasColumn < GroongaClientModel::Migration
   def up
-    config_delete "alias.column"
+    delete_config "alias.column"
   end
 
   def down
-    # config_set "alias.column", "old value"
+    # set_config "alias.column", "old value"
   end
 end
     MIGRATION
