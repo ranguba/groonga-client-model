@@ -137,6 +137,20 @@ module GroongaClientModel
       end
     end
 
+    def copy_table(from_table_name, to_table_name)
+      if @reverting
+        message = "can't revert copy_table(#{from_table_name}, #{to_table_name})"
+        raise IrreversibleMigrationError, message
+      end
+
+      report(__method__, [from_table_name, to_table_name]) do
+        @client.request(:table_copy).
+          parameter(:from_name, from_table_name).
+          parameter(:to_name, to_table_name).
+          response
+      end
+    end
+
     def add_column(table_name, column_name, value_type,
                    flags: nil,
                    type: nil,

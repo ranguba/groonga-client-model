@@ -49,6 +49,8 @@ module TestHelper
         end
       end
 
+      original_dump = dump
+
       up_output = StringIO.new
       open_client do |client|
         migration = migration_class.new(client)
@@ -67,7 +69,7 @@ module TestHelper
           migration.down
         end
         assert_equal(expected_down_report, normalize_report(down_output.string))
-        assert_equal("", dump)
+        assert_equal(original_dump, dump)
       else
         open_client do |client|
           migration = migration_class.new(client)
