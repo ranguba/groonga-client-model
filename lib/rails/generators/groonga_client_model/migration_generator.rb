@@ -54,7 +54,8 @@ module GroongaClientModel
         IllegalMigrationNameError.validate(file_name)
         decide_template(file_name)
         migration_template(@migration_template,
-                           File.join("db/groonga/migrate", "#{file_name}.rb"))
+                           File.join(Migrator.default_search_path,
+                                     "#{file_name}.rb"))
       end
 
       private

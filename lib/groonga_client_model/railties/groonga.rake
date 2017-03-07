@@ -37,7 +37,8 @@ namespace :groonga do
 
   desc "Migrate the Groonga database"
   task migrate: ["config:load"] do
-    Rails.application.paths["db/groonga/migrate"] ||= "db/groonga/migrate"
+    Rails.application.paths["db/groonga/migrate"] ||=
+      GroongaClientModel::Migrator.default_search_path
     migration_paths = Rails.application.paths["db/groonga/migrate"].to_a
     version = nil
     version = Integer(ENV["VERSION"]) if ENV["VERSION"]

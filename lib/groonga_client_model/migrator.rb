@@ -22,6 +22,10 @@ module GroongaClientModel
       def next_migration_number(number)
         [Time.now.utc.strftime("%Y%m%d%H%M%S"), "%.14d" % number].max
       end
+
+      def default_search_path
+        "db/groonga/migrate"
+      end
     end
 
     attr_accessor :output
