@@ -46,6 +46,7 @@ module GroongaClientModel
 
   class Migration
     attr_accessor :output
+    attr_reader :client
 
     def initialize(client)
       @client = client
