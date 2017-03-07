@@ -121,9 +121,27 @@ class TestMigrator < Test::Unit::TestCase
                    ],
                    migrator.each.collect(&:version))
     end
+  end
 
-    test("redo") do
-      migrator = create_migrator.migrate
+  sub_test_case("redo") do
+    test("first version") do
+      migrator = create_migrator
+      migrator.target_version = migrator.each.collect(&:version).first
+      migrator.migrate
+
+      migrator = create_migrator
+      migrator.step = -1
+      migrator.migrate
+      migrator.step = 1
+      assert_equal([
+                     20170301061420,
+                   ],
+                   migrator.each.collect(&:version))
+    end
+
+    test("latest version") do
+      migrator = create_migrator
+      migrator.migrate
 
       migrator = create_migrator
       migrator.step = -1

@@ -48,9 +48,9 @@ module GroongaClientModel
         index = step - 1
       else
         index = @versions.index(@current_version)
-        index += step if index
+        index += step
       end
-      if index.nil? or index < 0
+      if index < 0
         version = 0
       else
         version = @versions[index]
@@ -73,7 +73,11 @@ module GroongaClientModel
               migration.down
               delete_version(client, definition.version)
               previous_version_index = @versions.index(definition.version) - 1
-              @current_version = @versions[previous_version_index] || 0
+              if previous_version_index < 0
+                @current_version = nil
+              else
+                @current_version = @versions[previous_version_index]
+              end
             end
           end
         end
