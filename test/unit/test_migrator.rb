@@ -121,5 +121,18 @@ class TestMigrator < Test::Unit::TestCase
                    ],
                    migrator.each.collect(&:version))
     end
+
+    test("redo") do
+      migrator = create_migrator.migrate
+
+      migrator = create_migrator
+      migrator.step = -1
+      migrator.migrate
+      migrator.step = 1
+      assert_equal([
+                     20170303115135,
+                   ],
+                   migrator.each.collect(&:version))
+    end
   end
 end
