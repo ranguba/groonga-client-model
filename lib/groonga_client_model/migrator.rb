@@ -30,26 +30,50 @@ module GroongaClientModel
 
     attr_accessor :output
 
-    def initialize(search_paths, target_version)
+    def initialize(search_paths)
       @output = nil
       @search_paths = Array(search_paths)
-      @target_version = target_version
       ensure_versions
-      @current_version = @versions.last || 0
+      ensure_loaded_versions
+      @current_version = @loaded_versions.last
+      @target_version = nil
+    end
+
+    def target_version=(version)
+      @target_version = version
+    end
+
+    def step=(step)
+      if @current_version.nil?
+        index = step - 1
+      else
+        index = @versions.index(@current_version)
+        index += step if index
+      end
+      if index.nil? or index < 0
+        version = 0
+      else
+        version = @versions[index]
+      end
+      self.target_version = version
     end
 
     def migrate
+      is_forward = forward?
       each do |definition|
         Client.open do |client|
           migration = definition.create_migration(client)
           migration.output = @output
           report(definition) do
-            if forward?
+            if is_forward
               migration.up
               add_version(client, definition.version)
+              @current_version = definition.version
             else
               migration.down
               delete_version(client, definition.version)
+              previous_version_index = @versions.index(definition.version) - 1
+              @current_version = @versions[previous_version_index] || 0
             end
           end
         end
@@ -57,26 +81,20 @@ module GroongaClientModel
     end
 
     def each
-      paths = []
-      @search_paths.each do |search_path|
-        paths |= Dir.glob("#{search_path}/**/[0-9]*_*.rb").collect do |path|
-          File.expand_path(path)
-        end
-      end
-      definitions = []
-      paths.each do |path|
-        definition = Definition.new(path)
-        definitions << definition if definition.valid?
-      end
-      sorted_definitions = definitions.sort_by(&:version)
+      return to_enum(:each) unless block_given?
 
+      current_version = @current_version || 0
       if forward?
         sorted_definitions.each do |definition|
-          yield(definition) if definition.version > @current_version
+          next if definition.version <= current_version
+          next if @target_version and definition.version > @target_version
+          yield(definition)
         end
       else
         sorted_definitions.reverse_each do |definition|
-          yield(definition) if definition.version <= @current_version
+          next if definition.version > current_version
+          next if @target_version and definition.version <= @target_version
+          yield(definition)
         end
       end
     end
@@ -94,12 +112,35 @@ module GroongaClientModel
       "schema_versions"
     end
 
+    def collect_definitions
+      paths = []
+      @search_paths.each do |search_path|
+        paths |= Dir.glob("#{search_path}/**/[0-9]*_*.rb").collect do |path|
+          File.expand_path(path)
+        end
+      end
+      definitions = []
+      paths.each do |path|
+        definition = Definition.new(path)
+        definitions << definition if definition.valid?
+      end
+      definitions
+    end
+
+    def sorted_definitions
+      @sorted_definitions ||= collect_definitions.sort_by(&:version)
+    end
+
     def ensure_versions
+      @versions = sorted_definitions.collect(&:version)
+    end
+
+    def ensure_loaded_versions
       Client.open do |client|
         table_name = version_table_name
         exist = client.object_exist(name: table_name).body
         if exist
-          @versions = client.request(:select).
+          @loaded_versions = client.request(:select).
             parameter(:table, table_name).
             sort_keys([:_key]).
             limit(-1).
@@ -113,13 +154,14 @@ module GroongaClientModel
             flags_parameter(:flags, ["TABLE_PAT_KEY"]).
             parameter(:key_type, "UInt64").
             response
-          @versions = []
+          @loaded_versions = []
         end
       end
     end
 
     def forward?
       @target_version.nil? or
+        @current_version.nil? or
         (@target_version > @current_version)
     end
 

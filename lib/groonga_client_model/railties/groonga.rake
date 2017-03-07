@@ -35,14 +35,54 @@ namespace :groonga do
     end
   end
 
+  namespace :migrate do
+    task setup: ["config:load"] do
+      Rails.application.paths["db/groonga/migrate"] ||=
+        GroongaClientModel::Migrator.default_search_path
+    end
+
+    desc "Rollbacks the Groonga database one version and re-migrates"
+    task redo: ["setup"] do
+      migration_paths = Rails.application.paths["db/groonga/migrate"].to_a
+      migrator = GroongaClientModel::Migrator.new(migration_paths)
+      if ENV["VERSION"]
+        current_version = migrator.current_version
+        migrator.target_version = Integer(ENV["VERSION"])
+        migrator.migrate
+        migrator.target_version = current_version
+        migrator.migrate
+      else
+        if ENV["STEP"]
+          step = Integer(ENV["STEP"])
+        else
+          step = 1
+        end
+        migrator.step = -step
+        migrator.migrate
+        migrator.step = step
+        migrator.migrate
+      end
+    end
+
+    desc "Rolls the Groonga database back to the previous version"
+    task rollback: ["setup"] do
+      migration_paths = Rails.application.paths["db/groonga/migrate"].to_a
+      migrator = GroongaClientModel::Migrator.new(migration_paths)
+      if ENV["STEP"]
+        step = Integer(ENV["STEP"])
+      else
+        step = 1
+      end
+      migrator.step = -step
+      migrator.migrate
+    end
+  end
+
   desc "Migrates the Groonga database"
-  task migrate: ["config:load"] do
-    Rails.application.paths["db/groonga/migrate"] ||=
-      GroongaClientModel::Migrator.default_search_path
+  task migrate: ["migrate:setup"] do
     migration_paths = Rails.application.paths["db/groonga/migrate"].to_a
-    version = nil
-    version = Integer(ENV["VERSION"]) if ENV["VERSION"]
-    migrator = GroongaClientModel::Migrator.new(migration_paths, version)
+    migrator = GroongaClientModel::Migrator.new(migration_paths)
+    migrator.target_version = Integer(ENV["VERSION"]) if ENV["VERSION"]
     migrator.migrate
   end
 end
