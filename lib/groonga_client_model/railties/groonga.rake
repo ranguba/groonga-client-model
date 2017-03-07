@@ -45,13 +45,13 @@ namespace :groonga do
     task redo: ["setup"] do
       migration_paths = Rails.application.paths["db/groonga/migrate"].to_a
       migrator = GroongaClientModel::Migrator.new(migration_paths)
+      current_version = migrator.current_version
       if ENV["VERSION"]
-        current_version = migrator.current_version
         migrator.target_version = Integer(ENV["VERSION"])
         migrator.migrate
         migrator.target_version = current_version
         migrator.migrate
-      else
+      elsif current_version
         if ENV["STEP"]
           step = Integer(ENV["STEP"])
         else
@@ -59,7 +59,7 @@ namespace :groonga do
         end
         migrator.step = -step
         migrator.migrate
-        migrator.step = step
+        migrator.target_version = current_version
         migrator.migrate
       end
     end

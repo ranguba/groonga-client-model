@@ -29,6 +29,7 @@ module GroongaClientModel
     end
 
     attr_accessor :output
+    attr_reader :current_version
 
     def initialize(search_paths)
       @output = nil
