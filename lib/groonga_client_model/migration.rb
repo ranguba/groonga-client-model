@@ -204,6 +204,16 @@ module GroongaClientModel
       end
     end
 
+    def add_timestamp_columns(table_name)
+      add_column(table_name, :created_at, :time)
+      add_column(table_name, :updated_at, :time)
+    end
+
+    def remove_timestamp_columns(table_name)
+      remove_column(table_name, :updated_at)
+      remove_column(table_name, :created_at)
+    end
+
     def copy_column(from_full_column_name,
                     to_full_column_name)
       if @reverting
@@ -447,6 +457,10 @@ module GroongaClientModel
                               column_name,
                               reference_table_name,
                               options)
+      end
+
+      def timestamps
+        @migration.add_timestamp_columns(@table_name)
       end
 
       def index(source_table_name, source_column_names, options={})

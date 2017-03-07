@@ -363,6 +363,37 @@ column_create posts #{column_name} #{flags.join("|")} #{reference_table_name}
       end
     end
 
+    sub_test_case("#timestamps") do
+      test("default") do
+        expected_up_report = <<-REPORT
+-- create_table(:posts, {:type=>"TABLE_NO_KEY"})
+   -> 0.0s
+-- add_column(:posts, :created_at, {:flags=>["COLUMN_SCALAR"], :value_type=>"Time"})
+   -> 0.0s
+-- add_column(:posts, :updated_at, {:flags=>["COLUMN_SCALAR"], :value_type=>"Time"})
+   -> 0.0s
+        REPORT
+        expected_down_report = <<-REPORT
+-- remove_table(:posts)
+   -> 0.0s
+        REPORT
+        expected_dump = <<-DUMP.chomp
+table_create posts TABLE_NO_KEY
+column_create posts created_at COLUMN_SCALAR Time
+column_create posts updated_at COLUMN_SCALAR Time
+        DUMP
+        assert_migrate(expected_up_report,
+                       expected_down_report,
+                       expected_dump) do |migration|
+          migration.instance_eval do
+            create_table(:posts) do |table|
+              table.timestamps
+            end
+          end
+        end
+      end
+    end
+
     sub_test_case("#index") do
       test("for full text search") do
         expected_up_report = <<-REPORT
