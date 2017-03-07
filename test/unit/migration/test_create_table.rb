@@ -437,6 +437,51 @@ column_create terms posts_content COLUMN_INDEX|WITH_POSITION posts content
           end
         end
       end
+
+      test("multi sources") do
+        expected_up_report = <<-REPORT
+-- create_table(:posts, {:type=>"TABLE_NO_KEY"})
+   -> 0.0s
+-- add_column(:posts, :title, {:flags=>["COLUMN_SCALAR"], :value_type=>"ShortText"})
+   -> 0.0s
+-- add_column(:posts, :content, {:flags=>["COLUMN_SCALAR"], :value_type=>"Text"})
+   -> 0.0s
+-- create_table(:terms, {:type=>"TABLE_PAT_KEY", :key_type=>"ShortText", :tokenizer=>"TokenBigram", :normalizer=>"NormalizerAuto"})
+   -> 0.0s
+-- add_column(:terms, "posts_title_content", {:flags=>["COLUMN_INDEX", "WITH_POSITION", "WITH_SECTION"], :value_type=>:posts, :sources=>[:title, :content]})
+   -> 0.0s
+        REPORT
+        expected_down_report = <<-REPORT
+-- remove_table(:terms)
+   -> 0.0s
+-- remove_table(:posts)
+   -> 0.0s
+        REPORT
+        expected_dump = <<-DUMP.chomp
+table_create posts TABLE_NO_KEY
+column_create posts content COLUMN_SCALAR Text
+column_create posts title COLUMN_SCALAR ShortText
+
+table_create terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --normalizer NormalizerAuto
+
+column_create terms posts_title_content COLUMN_INDEX|WITH_SECTION|WITH_POSITION posts title,content
+        DUMP
+        assert_migrate(expected_up_report,
+                       expected_down_report,
+                       expected_dump) do |migration|
+          migration.instance_eval do
+            create_table(:posts) do |table|
+              table.short_text(:title)
+              table.text(:content)
+            end
+
+            create_table(:terms,
+                         :propose => :full_text_search) do |table|
+              table.index(:posts, [:title, :content])
+            end
+          end
+        end
+      end
     end
   end
 end

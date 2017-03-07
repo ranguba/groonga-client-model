@@ -163,6 +163,7 @@ module GroongaClientModel
 
       value_type = normalize_type(value_type)
       type = normalize_column_type(type || :scalar)
+      sources ||= source || []
       flags = Array(flags) | [type]
       if type == "COLUMN_INDEX"
         schema = GroongaClientModel::Schema.new
@@ -172,8 +173,10 @@ module GroongaClientModel
         else
           flags << "WITH_POSITION"
         end
+        if sources.size > 1
+          flags << "WITH_SECTION"
+        end
       end
-      sources ||= source
       options = {
         flags: flags,
         value_type: value_type,
