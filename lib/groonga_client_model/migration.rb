@@ -467,8 +467,10 @@ module GroongaClientModel
       end
 
       def index(source_table_name, source_column_names, options={})
+        options = options.dup
         source_column_names = Array(source_column_names)
-        column_name = [source_table_name, *source_column_names].join("_")
+        column_name = options.delete(:name)
+        column_name ||= [source_table_name, *source_column_names].join("_")
         @migration.add_column(@table_name,
                               column_name,
                               source_table_name,
