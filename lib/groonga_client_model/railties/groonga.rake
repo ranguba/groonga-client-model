@@ -35,7 +35,7 @@ namespace :groonga do
     end
   end
 
-  desc "Migrate the Groonga database"
+  desc "Migrates the Groonga database"
   task migrate: ["config:load"] do
     Rails.application.paths["db/groonga/migrate"] ||=
       GroongaClientModel::Migrator.default_search_path
