@@ -138,7 +138,7 @@ table_create terms TABLE_PAT_KEY ShortText --default_tokenizer TokenBigram --nor
       expected_up_report = <<-REPORT
 -- create_table(:posts, {:type=>"TABLE_NO_KEY"})
    -> 0.0s
--- add_column(:posts, :#{column_name}, {:flags=>["COLUMN_SCALAR"], :value_type=>"#{groonga_type}"})
+-- add_column(:posts, :#{column_name}, {:flags=>["COLUMN_SCALAR"], :value_type=>#{groonga_type.inspect}})
    -> 0.0s
       REPORT
       expected_down_report = <<-REPORT
@@ -298,6 +298,67 @@ column_create posts #{column_name} COLUMN_SCALAR #{groonga_type}
       test("alias: #tokyo_geo_point") do
         assert_migrate_add_column(:location, "TokyoGeoPoint") do |table|
           table.tokyo_geo_point(:location)
+        end
+      end
+    end
+
+    sub_test_case("#reference") do
+      def assert_migrate_add_reference_column(column_name,
+                                              reference_table_name,
+                                              options={})
+        open_client do |client|
+          client.table_create(name: reference_table_name,
+                              flags: "TABLE_HASH_KEY",
+                              key_type: "ShortText")
+        end
+
+        flags = []
+        case options[:type]
+        when :vector
+          flags << "COLUMN_VECTOR"
+        else
+          flags << "COLUMN_SCALAR"
+        end
+
+        expected_up_report = <<-REPORT
+-- create_table(:posts, {:type=>"TABLE_NO_KEY"})
+   -> 0.0s
+-- add_column(:posts, :#{column_name}, {:flags=>#{flags.inspect}, :value_type=>#{reference_table_name.inspect}})
+   -> 0.0s
+        REPORT
+        expected_down_report = <<-REPORT
+-- remove_table(:posts)
+   -> 0.0s
+        REPORT
+        expected_dump = <<-DUMP.chomp
+table_create posts TABLE_NO_KEY
+
+table_create #{reference_table_name} TABLE_HASH_KEY ShortText
+
+column_create posts #{column_name} #{flags.join("|")} #{reference_table_name}
+        DUMP
+        assert_migrate(expected_up_report,
+                       expected_down_report,
+                       expected_dump) do |migration|
+          migration.instance_eval do
+            create_table(:posts) do |table|
+              yield(table)
+            end
+          end
+        end
+      end
+
+      test("default") do
+        assert_migrate_add_reference_column(:user, :users) do |table|
+          table.reference(:user, :users)
+        end
+      end
+
+      test("type: :vector") do
+        assert_migrate_add_reference_column(:user,
+                                            :users,
+                                            type: :vector) do |table|
+          table.reference(:user, :users, type: :vector)
         end
       end
     end

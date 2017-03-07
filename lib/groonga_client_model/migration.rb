@@ -442,6 +442,13 @@ module GroongaClientModel
         geo_point(column_name, options.merge(datum: :tokyo))
       end
 
+      def reference(column_name, reference_table_name, options={})
+        @migration.add_column(@table_name,
+                              column_name,
+                              reference_table_name,
+                              options)
+      end
+
       def index(source_table_name, source_column_names, options={})
         source_column_names = Array(source_column_names)
         column_name = [source_table_name, *source_column_names].join("_")
