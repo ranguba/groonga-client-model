@@ -216,6 +216,29 @@ module GroongaClientModel
       end
     end
 
+    def load(table_name, values, options={})
+      if @reverting
+        message = "can't revert load(#{table_name.inspect})"
+        raise IrreversibleMigrationError, message
+      end
+
+      case values
+      when Hash
+        json_values = [values].to_json
+      when Array
+        json_values = values.to_json
+      else
+        json_values = values
+      end
+      report(__method__, [table_name]) do
+        @client.request(:load).
+          parameter(:table, table_name).
+          values_parameter(:columns, options[:columns]).
+          parameter(:values, json_values).
+          response
+      end
+    end
+
     private
     def puts(*args)
       if @output
