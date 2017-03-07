@@ -36,7 +36,7 @@ namespace :groonga do
   end
 
   desc "Migrate the Groonga database"
-  task :migrate do
+  task migrate: ["config:load"] do
     Rails.application.paths["db/groonga/migrate"] ||= "db/groonga/migrate"
     migration_paths = Rails.application.paths["db/groonga/migrate"].to_a
     version = nil
