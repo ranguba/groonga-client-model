@@ -65,20 +65,6 @@ module GroongaClientModel
       end
     end
 
-    def revert
-      @pending_actions.clear
-      @reverting = true
-      begin
-        yield
-      ensure
-        @reverting = false
-      end
-      @pending_actions.reverse_each do |action|
-        public_send(*action)
-      end
-      @pending_actions.clear
-    end
-
     def create_table(name,
                      type: nil,
                      key_type: nil,
@@ -287,6 +273,17 @@ module GroongaClientModel
       end
     end
 
+    def exist?(name)
+      @client.request(:object_exist).
+        parameter(:name, name).
+        response.
+        body
+    end
+
+    def reverting?
+      @reverting
+    end
+
     private
     def puts(*args)
       if @output
@@ -303,6 +300,20 @@ module GroongaClientModel
         yield
       end
       puts("   -> %.4fs" % time.real)
+    end
+
+    def revert
+      @pending_actions.clear
+      @reverting = true
+      begin
+        yield
+      ensure
+        @reverting = false
+      end
+      @pending_actions.reverse_each do |action|
+        public_send(*action)
+      end
+      @pending_actions.clear
     end
 
     def normalize_table_type(type)
