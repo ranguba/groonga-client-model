@@ -50,7 +50,7 @@ module GroongaClientModel
           end
         elsif migrate_path.exist?
           output = StringIO.new
-          migrator = Migrator.new(migrate_path, nil)
+          migrator = Migrator.new(migrate_path)
           migrator.output = output
           migrator.migrate
         end
