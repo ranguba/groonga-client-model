@@ -56,6 +56,22 @@ end
     MIGRATION
   end
 
+  test "set_config: value" do
+    run_generator(["set_config_alias_column", "aliases.real_name"])
+    assert_migration("db/groonga/migrate/set_config_alias_column.rb", <<-MIGRATION)
+class SetConfigAliasColumn < GroongaClientModel::Migration
+  def up
+    config_set "alias.column", "aliases.real_name"
+  end
+
+  def down
+    # config_set "alias.column", "old value"
+    # config_delete "alias.column"
+  end
+end
+    MIGRATION
+  end
+
   test "delete_config" do
     run_generator(["delete_config_alias_column"])
     assert_migration("db/groonga/migrate/delete_config_alias_column.rb", <<-MIGRATION)

@@ -81,6 +81,11 @@ module GroongaClientModel
         when /\Aset_config_(.*)\z/
           @migration_template = "set_config_migration.rb"
           @config_key = normalize_config_key($1)
+          if attributes.empty?
+            @config_value = "new value"
+          else
+            @config_value = attributes.first.name
+          end
         when /\Adelete_config_(.*)\z/
           @migration_template = "delete_config_migration.rb"
           @config_key = normalize_config_key($1)

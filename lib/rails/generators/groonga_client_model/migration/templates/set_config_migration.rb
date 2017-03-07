@@ -1,6 +1,6 @@
 class <%= migration_class_name %> < GroongaClientModel::Migration
   def up
-    config_set "<%= @config_key %>", "new value"
+    config_set "<%= @config_key %>", "<%= @config_value %>"
   end
 
   def down
