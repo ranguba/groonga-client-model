@@ -1,6 +1,8 @@
 class <%= migration_class_name %> < GroongaClientModel::Migration
   def change
-    create_table :<%= table_name %><%= create_table_options %> do |t|
+    create_table :<%= table_name %><%=
+                 create_table_options("    create_table ".size)
+                 %> do |t|
 <% target_attributes.each do |attribute| -%>
       t.<%= attribute.type %> :<%= attribute.name %><%= attribute.inject_options %>
 <% end -%>

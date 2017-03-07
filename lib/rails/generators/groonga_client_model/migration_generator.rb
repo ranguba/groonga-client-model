@@ -96,15 +96,17 @@ module GroongaClientModel
         name.pluralize
       end
 
-      def create_table_options
+      def create_table_options(indent_size=0)
+        prefix = ",\n" + (" " * indent_size)
         table_type = @options[:table_type]
+        table_type ||= "hash_table" if @key_type
         table_propose = @options[:table_propose]
         options_text = ""
         if table_type
-          options_text = ", type: :#{table_type}"
-          options_text << ", key_type: :#{@key_type}" if @key_type
+          options_text << "#{prefix}type: :#{table_type}"
+          options_text << "#{prefix}key_type: :#{@key_type}" if @key_type
         end
-        options_text << ", propose: :#{table_propose}" if table_propose
+        options_text << "#{prefix}propose: :#{table_propose}" if table_propose
         options_text
       end
 

@@ -40,6 +40,20 @@ end
     MIGRATION
   end
 
+  test "create_table: _key" do
+    run_generator(["create_posts", "_key:short_text"])
+    assert_migration("db/groonga/migrate/create_posts.rb", <<-MIGRATION)
+class CreatePosts < GroongaClientModel::Migration
+  def change
+    create_table :posts,
+                 type: :hash_table,
+                 key_type: :short_text do |t|
+    end
+  end
+end
+    MIGRATION
+  end
+
   test "set_config" do
     run_generator(["set_config_alias_column"])
     assert_migration("db/groonga/migrate/set_config_alias_column.rb", <<-MIGRATION)
