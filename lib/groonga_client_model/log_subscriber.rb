@@ -43,10 +43,8 @@ module GroongaClientModel
       end
     end
 
-    reset_runtime
-
     def groonga(event)
-      self.class.runtime += event.duration
+      self.class.runtime = (self.class.runtime || 0) + event.duration
 
       debug do
         command = event.payload[:command]
