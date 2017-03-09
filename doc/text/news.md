@@ -1,5 +1,35 @@
 # NEWS
 
+## 1.0.1 - 2016-03-09
+
+### Improvements
+
+  * Supported migration: The following tasks are available:
+
+    * `groonga:migrate`: migrates the Groonga database to the latest schema.
+
+    * `groonga:migrate:rollback`: rollbacks the last migration.
+
+    * `groonga:migrate:redo`: rollbacks the last migration and
+      re-applies the last migration.
+
+  * Supported auto timestamp columns (`created_at`, `created_on`,
+    `updated_at` and `updated_on`) update.
+
+  * {GroongaClientModel::Record#find}: Supported record object.
+
+  * Added model generator.
+
+  * Added migration generator.
+
+  * {GroongaClientModel::Record}: Supported auto predicate method
+    generation for `Bool` type columns.
+
+### Fixes
+
+  * Fixed a bug that groonga-client-model is the default ORM even when
+    Active Record is enabled.
+
 ## 1.0.0 - 2016-02-07
 
 ### Fixes
