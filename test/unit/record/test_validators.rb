@@ -15,16 +15,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 class TestRecordValidators < Test::Unit::TestCase
-  Column = Groonga::Client::Response::Schema::Column
-
   sub_test_case("_key") do
     class NoKey < GroongaClientModel::Record
       class << self
         def columns
-          raw_columns = {
-            "_id" => Column.new(nil, {}),
-          }
-          GroongaClientModel::Schema::Columns.new(nil, raw_columns)
+          TestHelper::Columns.build
         end
       end
     end
@@ -32,16 +27,11 @@ class TestRecordValidators < Test::Unit::TestCase
     class Key < GroongaClientModel::Record
       class << self
         def columns
-          raw_columns = {
-            "_id" => Column.new(nil, {}),
-            "_key" => Column.new(nil, {
-                                   "name" => "_key",
-                                   "value_type" => {
-                                     "name" => key_type,
-                                   },
-                                 }),
-          }
-          GroongaClientModel::Schema::Columns.new(nil, raw_columns)
+          TestHelper::Columns.build("_key" => {
+                                      "value_type" => {
+                                        "name" => key_type,
+                                      },
+                                    })
         end
       end
     end

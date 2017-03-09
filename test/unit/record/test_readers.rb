@@ -15,12 +15,14 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 class TestRecordReaders < Test::Unit::TestCase
-  Column = Groonga::Client::Response::Schema::Column
-
   class Memo < GroongaClientModel::Record
     class << self
       def columns
-        GroongaClientModel::Schema::Columns.new(nil, "_id" => {})
+        TestHelper::Columns.build("published" => {
+                                    "value_type" => {
+                                      "name" => "Bool",
+                                    },
+                                  })
       end
     end
   end
@@ -32,5 +34,12 @@ class TestRecordReaders < Test::Unit::TestCase
   test "#id" do
     @memo._id = 29
     assert_equal(29, @memo.id)
+  end
+
+  test "predicate" do
+    @memo.published = true
+    assert do
+      @memo.published?
+    end
   end
 end

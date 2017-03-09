@@ -25,6 +25,31 @@ require "groonga_client_model/migration"
 GroongaClientModel::Client.url = "http://127.0.0.1:20041"
 
 module TestHelper
+  module Columns
+    Column = Groonga::Client::Response::Schema::Column
+
+    class << self
+      def build(definitions={})
+        raw_schema = nil
+        raw_columns = {}
+        default_definition = {
+          "indexes" => [],
+          "value_type" => nil,
+        }
+        id_definition = default_definition.merge("name" => "_id",
+                                                 "value_type" => {
+                                                   "name" => "UInt32",
+                                                 })
+        raw_columns["_id"] = Column.new(raw_schema, id_definition)
+        definitions.each do |name, definition|
+          definition = default_definition.merge("name" => name).merge(definition)
+          raw_columns[name] = Column.new(raw_schema, definition)
+        end
+        GroongaClientModel::Schema::Columns.new(raw_schema, raw_columns)
+      end
+    end
+  end
+
   module Migration
     def open_client(&block)
       GroongaClientModel::Client.open(&block)

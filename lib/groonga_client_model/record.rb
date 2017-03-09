@@ -52,8 +52,21 @@ module GroongaClientModel
       def define_attributes
         return if defined?(@defined)
         @defined = true
+
+        boolean_column_names = []
+        non_boolean_column_names = []
+        columns.each do |name, column|
+          if (column["value_type"] || {})["name"] == "Bool"
+            boolean_column_names << name
+          else
+            non_boolean_column_names << name
+          end
+        end
+
         attribute_method_suffix("=")
-        define_attribute_methods(*columns.names)
+        define_attribute_methods(*non_boolean_column_names)
+        attribute_method_suffix("?")
+        define_attribute_methods(*boolean_column_names)
       end
 
       def count
@@ -133,6 +146,12 @@ module GroongaClientModel
             attribute_will_change!(name)
           end
           @attributes[name] = value
+        end
+      end
+
+      def define_method_attribute?(name)
+        define_method("#{name}?") do
+          @attributes[name]
         end
       end
     end

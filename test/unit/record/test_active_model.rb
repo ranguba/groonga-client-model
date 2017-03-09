@@ -15,15 +15,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 class TestRecordActiveModel < Test::Unit::TestCase
-  Column = Groonga::Client::Response::Schema::Column
-
   class EmptyModel < GroongaClientModel::Record
     class << self
       def columns
-        raw_columns = {
-          "_id" => Column.new(nil, {}),
-        }
-        GroongaClientModel::Schema::Columns.new(nil, raw_columns)
+        TestHelper::Columns.build
       end
     end
   end
