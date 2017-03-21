@@ -18,6 +18,12 @@ require "groonga/command/parser"
 
 module GroongaClientModel
   class SchemaLoader
+    class << self
+      def default_path
+        "db/schema.grn"
+      end
+    end
+
     def initialize(schema)
       @schema = schema
     end

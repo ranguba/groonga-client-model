@@ -41,8 +41,8 @@ module GroongaClientModel
           base_dir = Pathname.pwd
         end
 
-        schema_path = base_dir + "db" + "schema.grn"
-        migrate_path = base_dir + "db" + "groonga" + "migrate"
+        schema_path = base_dir + SchemaLoader.default_path
+        migrate_path = base_dir + Migrator.default_search_path
         if schema_path.exist?
           schema_path.open do |schema_file|
             schema_loader = SchemaLoader.new(schema_file)

@@ -28,9 +28,11 @@ namespace :groonga do
   end
 
   namespace :schema do
-    desc "Loads db/schema.grn into the Groonga database"
+    schema_path = GroongaClientModel::SchemaLoader.default_path
+    desc "Loads #{schema_path} into the Groonga database"
     task load: ["config:load"] do
-      schema_loader = GroongaClientModel::SchemaLoader.new(Rails.root)
+      full_schema_path = Rails.root + schema_path
+      schema_loader = GroongaClientModel::SchemaLoader.new(full_schema_path)
       schema_loader.load
     end
   end
