@@ -30,7 +30,7 @@ namespace :groonga do
   namespace :schema do
     desc "Loads db/schema.grn into the Groonga database"
     task load: ["config:load"] do
-      schema_loader = GroongaClientModel::SchemaLoader.new(Rails.root)
+      schema_loader = GroongaClientModel::SchemaLoader.new(Rails.root + "db/schema.grn")
       schema_loader.load
     end
   end
