@@ -32,6 +32,9 @@ namespace :groonga do
     desc "Loads #{schema_path} into the Groonga database"
     task load: ["config:load"] do
       full_schema_path = Rails.root + schema_path
+      unless full_schema_path.exist?
+        raise "Schema file doesn't exist: #{full_schema_path}"
+      end
       schema_loader = GroongaClientModel::SchemaLoader.new(full_schema_path)
       schema_loader.load
     end
