@@ -343,9 +343,8 @@ module GroongaClientModel
       when "index", /\A(?:COLUMN_)?INDEX\z/i
         "COLUMN_INDEX"
       else
-        message = "table type must be one of "
-        message << "[:array, :hash_table, :patricia_trie, :double_array_trie]: "
-        message << "#{type.inspect}"
+        message = "column type must be one of "
+        message << "[:scalar, :vector, :index]: #{type.inspect}"
         raise ArgumentError, message
       end
     end
