@@ -179,6 +179,22 @@ module GroongaClientModel
       end
     end
 
+    def rename_column(table_name,
+                      old_column_name, new_column_name)
+      if @reverting
+        @pending_actions << [:rename_column, table_name, new_column_name, old_column_name]
+        return
+      end
+
+      report(__method__, [table_name, old_column_name, new_column_name]) do
+        @client.request(:column_rename).
+          parameter(:table, table_name).
+          parameter(:name, old_column_name).
+          parameter(:new_name, new_column_name).
+          response
+      end
+    end
+
     def remove_column(table_name, column_name)
       if @reverting
         message = "can't revert remove_column(#{table_name}, #{column_name})"
