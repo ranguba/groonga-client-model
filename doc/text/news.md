@@ -1,5 +1,23 @@
 # NEWS
 
+## 1.0.2 - 2018-02-13
+
+### Improvements
+
+  * migration: Added `#rename_column` support.
+    [GitHub#8][Patch by Horimoto Yasuhiro]
+
+### Fixes
+
+  * Fixed a bug that `groonga:schema:load` doesn't load
+    `db/schema.grn`. [GitHub#1][Reported by okkez]
+
+### Thanks
+
+  * okkez
+
+  * Horimoto Yasuhiro
+
 ## 1.0.1 - 2016-03-09
 
 ### Improvements
