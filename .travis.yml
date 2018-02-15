@@ -22,9 +22,5 @@ install:
     done
 script:
   - bundle exec ruby test/unit/run-test.rb
-  - |
-    for test_app in ${PWD}/test/apps/*
-    do
-      (cd ${test_app} && \
-        BUNDLE_GEMFILE=${PWD}/Gemfile bin/rails test)
-    done
+  - (cd test/apps/rails4 && BUNDLE_GEMFILE=${PWD}/Gemfile bin/rake test)
+  - (cd test/apps/rails5 && BUNDLE_GEMFILE=${PWD}/Gemfile bin/rails test)
