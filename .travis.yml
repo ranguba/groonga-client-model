@@ -5,7 +5,8 @@ notifications:
 rvm:
   - 2.2
   - 2.3.3
-  - 2.4.0
+  - 2.4.3
+  - 2.5.0
 before_install:
   - curl --silent --location https://github.com/groonga/groonga/raw/master/data/travis/setup.sh | sh
   - sudo apt-get -qq -y install groonga-bin
