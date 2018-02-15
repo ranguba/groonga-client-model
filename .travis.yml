@@ -23,4 +23,4 @@ install:
 script:
   - bundle exec ruby test/unit/run-test.rb
   - (cd test/apps/rails4 && BUNDLE_GEMFILE=${PWD}/Gemfile bin/rake test)
-  - (cd test/apps/rails5 && BUNDLE_GEMFILE=${PWD}/Gemfile bin/rails test)
+  - (cd test/apps/rails5.0 && BUNDLE_GEMFILE=${PWD}/Gemfile bin/rails test)
