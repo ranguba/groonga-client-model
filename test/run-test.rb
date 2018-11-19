@@ -32,9 +32,13 @@ Dir.glob("#{__dir__}/apps/*") do |test_application|
     "bundle",
     "exec",
     RbConfig.ruby,
-    "bin/rails",
-    "test",
   ]
+  if test_application.end_with?("rails4")
+    command_line << "bin/rake"
+  else
+    command_line << "bin/rails"
+  end
+  command_line << "test"
   unless ARGV.empty?
     command_line << "TESTOPTS=#{ARGV.join(' ')}"
   end
