@@ -1,7 +1,6 @@
 notifications:
-  email:
-    recipients:
-      - groonga-commit@lists.sourceforge.jp
+  webhooks:
+    - https://webhook.commit-email.info/
 rvm:
   - 2.2
   - 2.3.3
