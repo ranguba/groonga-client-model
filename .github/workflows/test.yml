@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/checkout@v2
         with:
-          repository: "groonga/groonga-client"
+          repository: "https://github.com/groonga/groonga-client"
           path: "groonga-client"
       - uses: ruby/setup-ruby@v1
         with:
