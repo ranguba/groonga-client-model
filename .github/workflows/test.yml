@@ -1,0 +1,42 @@
+name: Test
+on:
+  - push
+  - pull_request
+jobs:
+  test:
+    name: ${{ matrix.ruby-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby-version:
+          - "2.6"
+          - "2.7"
+          - "3.0"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+      - name: Install Groonga
+        run: |
+          sudo apt install -y -V software-properties-common
+          sudo add-apt-repository -y ppa:groonga/ppa
+          sudo apt update
+          sudo apt install -y groonga-bin
+      - name: Install dependencies to build gems
+        run: |
+          bundle install
+          for test_app in ${PWD}/test/apps/*
+          do
+            (cd ${test_app} && BUNDLE_GEMFILE=${PWD}/Gemfile bundle install)
+          done
+      - name: "Test: unit"
+        run: |
+          bundle exec ruby test/run-test.rb
+      - name: "Test: Rails 4"
+        run: |
+          (cd test/apps/rails4 && BUNDLE_GEMFILE=${PWD}/Gemfile bin/rake test)
+      - name: "Test: Rails 5.0"
+        run: |
+          (cd test/apps/rails4 && BUNDLE_GEMFILE=${PWD}/Gemfile bin/rake test)
