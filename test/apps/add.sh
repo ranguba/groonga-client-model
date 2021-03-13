@@ -30,7 +30,8 @@ shift
 rm -rf blog
 rails _${rails_version}_ new blog \
       --skip-active-record \
-      --skip-spring
+      --skip-spring \
+      --skip-webpack-install
 pushd blog
 cat <<GEMFILE >> Gemfile
 gem 'groonga-client-model', path: '../../../'
