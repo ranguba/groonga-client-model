@@ -448,6 +448,38 @@ module GroongaClientModel
         @migration.add_column(@table_name, column_name, type, **options)
       end
 
+      def int8(column_name, **options)
+        integer(column_name, **options.merge(bit: 8, unsigned: false))
+      end
+
+      def int16(column_name, **options)
+        integer(column_name, **options.merge(bit: 16, unsigned: false))
+      end
+
+      def int32(column_name, **options)
+        integer(column_name, **options.merge(bit: 32, unsigned: false))
+      end
+
+      def int64(column_name, **options)
+        integer(column_name, **options.merge(bit: 64, unsigned: false))
+      end
+
+      def uint8(column_name, **options)
+        integer(column_name, **options.merge(bit: 8, unsigned: true))
+      end
+
+      def uint16(column_name, **options)
+        integer(column_name, **options.merge(bit: 16, unsigned: true))
+      end
+
+      def uint32(column_name, **options)
+        integer(column_name, **options.merge(bit: 32, unsigned: true))
+      end
+
+      def uint64(column_name, **options)
+        integer(column_name, **options.merge(bit: 64, unsigned: true))
+      end
+
       def float(column_name, **options)
         @migration.add_column(@table_name, column_name, :float, **options)
       end
