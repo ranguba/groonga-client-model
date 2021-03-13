@@ -1,5 +1,11 @@
 # NEWS
 
+## 6.0.0 - 2021-03-13
+
+### Improvements
+
+  * Add support for Active Model 6 or later.
+
 ## 1.0.2 - 2018-02-13
 
 ### Improvements
