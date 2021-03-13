@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2016-2021  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -19,8 +19,8 @@ require "groonga_client_model/test/groonga_server_runner"
 module GroongaClientModel
   module Test
     module Fixture
-      def setup_groonga
-        @groonga_server_runner = GroongaServerRunner.new
+      def setup_groonga(**kwargs)
+        @groonga_server_runner = GroongaServerRunner.new(**kwargs)
         @groonga_server_runner.run
       end
 

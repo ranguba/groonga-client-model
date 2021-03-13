@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2016-2021  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -14,6 +14,8 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
+require "active_support/testing/parallelization"
+
 require "groonga_client_model/test/fixture"
 
 module GroongaClientModel
@@ -22,9 +24,14 @@ module GroongaClientModel
 
     extend ActiveSupport::Concern
 
+    parallel_test = false
+    ActiveSupport::Testing::Parallelization.after_fork_hook do
+      parallel_test = true
+    end
+
     included do
       setup do
-        setup_groonga
+        setup_groonga(parallel_test: parallel_test)
       end
 
       teardown do

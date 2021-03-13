@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2017  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2016-2021  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -26,8 +26,15 @@ require "groonga_client_model/migrator"
 module GroongaClientModel
   module Test
     class GroongaServerRunner < Groonga::Client::Test::GroongaServerRunner
-      def initialize
-        super
+      def initialize(parallel_test: false)
+        super()
+        if parallel_test
+          host = "127.0.0.1"
+          port = TCPServer.open(host, 0) do |server|
+            server.addr[1]
+          end
+          Client.url = "http://#{host}:#{port}"
+        end
         @client = Client.new
       end
 
@@ -57,7 +64,7 @@ module GroongaClientModel
       end
 
       def url
-        @url ||= URI(@client.url)
+        URI.parse(@client.url)
       end
 
       private
