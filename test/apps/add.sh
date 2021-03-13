@@ -54,10 +54,13 @@ class ActiveSupport::TestCase
 end
 TEST_HELPER
 sed -i'' -e 's/posts(:one)/create(:post)/g' test/**/*_test.rb
+sed -i'' -e 's/\(driven_by.*\)$/\1 do |option| option.add_argument("no-sandbox"); end/g' \
+    test/application_system_test_case.rb
 if PATH=$PWD/bin:$PATH rails --tasks | grep -q test:all; then
   PATH=$PWD/bin:$PATH rails test:all
 else
   PATH=$PWD/bin:$PATH rails test
+  PATH=$PWD/bin:$PATH rails test:system
 fi
 sed -i'' -e 's/^ruby .*//g' Gemfile
 rm .ruby-version
@@ -71,5 +74,6 @@ echo <<GITIGNORE >> .gitignore
 GITIGNORE
 rm -rf .git
 popd
+rm -rf rails${rails_version}
 mv blog rails${rails_version}
 git add rails${rails_version}
