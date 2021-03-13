@@ -1,6 +1,6 @@
 # -*- ruby -*-
 #
-# Copyright (C) 2016  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2016-2021  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -40,7 +40,7 @@ end
 Packnga::ReleaseTask.new(spec) do
 end
 
-desc "Run tests"
+desc "Run unit tests"
 task :test do
-  ruby("test/run-test.rb")
+  ruby("test/unit/run-test.rb")
 end

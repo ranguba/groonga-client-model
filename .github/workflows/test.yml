@@ -36,7 +36,7 @@ jobs:
           bundle install
       - name: "Test: unit"
         run: |
-          bundle exec ruby test/run-test.rb
+          bundle exec ruby test/unit/run-test.rb
       - name: "Test: Rails 6.1.3"
         run: |
           cd test/apps/rails6.1.3
