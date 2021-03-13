@@ -157,10 +157,10 @@ module GroongaClientModel
         when nil, "TokenDelimit"
           # do nothing
         else
-          flags << "WITH_POSITION"
+          flags |= ["WITH_POSITION"]
         end
         if sources.size > 1
-          flags << "WITH_SECTION"
+          flags |= ["WITH_SECTION"]
         end
       end
       options = {
