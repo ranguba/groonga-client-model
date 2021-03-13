@@ -44,7 +44,7 @@ GEMFILE
 bin/bundle update
 sed -i'' -e 's/"yarn"/"yarnpkg", "yarn"/g' bin/yarn
 PATH=$PWD/bin:$PATH rails webpacker:install
-bin/rails generate scaffold post title:string body:text
+PATH=$PWD/bin:$PATH bin/rails generate scaffold post title:string body:text
 cat <<TEST_HELPER >> test/test_helper.rb
 
 require "groonga_client_model/test_helper"
@@ -54,7 +54,11 @@ class ActiveSupport::TestCase
 end
 TEST_HELPER
 sed -i'' -e 's/posts(:one)/create(:post)/g' test/**/*_test.rb
-PATH=$PWD/bin:$PATH rails test:all
+if PATH=$PWD/bin:$PATH rails --tasks | grep -q test:all; then
+  PATH=$PWD/bin:$PATH rails test:all
+else
+  PATH=$PWD/bin:$PATH rails test
+fi
 sed -i'' -e 's/^ruby .*//g' Gemfile
 rm .ruby-version
 rm Gemfile.lock
