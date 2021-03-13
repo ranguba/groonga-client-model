@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2018  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2016-2021  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -15,5 +15,5 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 module GroongaClientModel
-  VERSION = "1.0.3"
+  VERSION = "6.0.0"
 end
