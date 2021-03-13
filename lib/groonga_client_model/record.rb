@@ -24,6 +24,7 @@ module GroongaClientModel
     include ActiveModel::Dirty
     include ActiveModel::Translation
     include ActiveModel::Validations
+    include ActiveModel::Validations::Callbacks
 
     class << self
       def i18n_scope
