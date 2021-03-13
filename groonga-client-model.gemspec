@@ -1,6 +1,6 @@
 # -*- ruby -*-
 #
-# Copyright (C) 2016-2017  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2016-2021  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.name = "groonga-client-model"
   spec.version = GroongaClientModel::VERSION
   spec.homepage = "https://github.com/ranguba/groonga-client-model"
-  spec.authors = ["Kouhei Sutou"]
+  spec.authors = ["Sutou Kouhei"]
   spec.email = ["kou@clear-code.com"]
 
   readme = File.read("README.md")
@@ -45,7 +45,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency("groonga-client", ">= 0.4.2")
   spec.add_runtime_dependency("groonga-command-parser")
-  spec.add_runtime_dependency("activemodel")
+  spec.add_runtime_dependency("activemodel", ">= 6")
 
   spec.add_development_dependency("bundler")
   spec.add_development_dependency("rake")
