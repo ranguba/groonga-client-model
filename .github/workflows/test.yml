@@ -34,16 +34,18 @@ jobs:
       - name: Install dependencies to build gems
         run: |
           bundle install
-          for test_app in ${PWD}/test/apps/*
-          do
-            (cd ${test_app} && BUNDLE_GEMFILE=${PWD}/Gemfile bundle install)
-          done
       - name: "Test: unit"
         run: |
           bundle exec ruby test/run-test.rb
       - name: "Test: Rails 4"
         run: |
-          (cd test/apps/rails4 && BUNDLE_GEMFILE=${PWD}/Gemfile bin/rake test)
+          cd test/apps/rails4
+          export BUNDLE_GEMFILE=${PWD}/Gemfile
+          bundle install
+          bin/rake test
       - name: "Test: Rails 5.0"
         run: |
-          (cd test/apps/rails4 && BUNDLE_GEMFILE=${PWD}/Gemfile bin/rake test)
+          cd test/apps/rails5.0
+          export BUNDLE_GEMFILE=${PWD}/Gemfile
+          bundle install
+          bin/rake test
