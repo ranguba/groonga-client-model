@@ -1,2 +1,0 @@
-class Age < ApplicationGroongaRecord
-end
