@@ -239,6 +239,17 @@ module GroongaClientModel
       end
     end
 
+    def add_index(table_name, source_table_name, source_column_names, **options)
+      source_column_names = Array(source_column_names)
+      column_name = options.delete(:name)
+      column_name ||= [source_table_name, *source_column_names].join("_")
+      add_column(table_name,
+                 column_name,
+                 source_table_name,
+                 **options.merge(:type => :index,
+                                 :sources => source_column_names))
+    end
+
     def set_config(key, value)
       if @reverting
         message = "can't revert set_config(#{key.inspect}, #{value.inspect})"
@@ -492,14 +503,10 @@ module GroongaClientModel
       end
 
       def index(source_table_name, source_column_names, **options)
-        source_column_names = Array(source_column_names)
-        column_name = options.delete(:name)
-        column_name ||= [source_table_name, *source_column_names].join("_")
-        @migration.add_column(@table_name,
-                              column_name,
-                              source_table_name,
-                              **options.merge(:type => :index,
-                                              :sources => source_column_names))
+        @migration.add_index(@table_name,
+                             source_table_name,
+                             source_column_names,
+                             **options)
       end
     end
   end
