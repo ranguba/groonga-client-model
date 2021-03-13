@@ -31,21 +31,16 @@ jobs:
           sudo add-apt-repository -y ppa:groonga/ppa
           sudo apt update
           sudo apt install -y groonga-bin
-      - name: Install dependencies to build gems
+      - name: Install dependencies
         run: |
           bundle install
       - name: "Test: unit"
         run: |
           bundle exec ruby test/run-test.rb
-      - name: "Test: Rails 4"
+      - name: "Test: Rails 6.1.3"
         run: |
-          cd test/apps/rails4
+          cd test/apps/rails6.1.3
           export BUNDLE_GEMFILE=${PWD}/Gemfile
           bundle install
-          bin/rake test
-      - name: "Test: Rails 5.0"
-        run: |
-          cd test/apps/rails5.0
-          export BUNDLE_GEMFILE=${PWD}/Gemfile
-          bundle install
-          bin/rake test
+          PATH=$PWD/bin:$PATH bin/rails webpacker:install
+          PATH=$PWD/bin:$PATH bin/rails test:all
