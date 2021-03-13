@@ -4,7 +4,7 @@ class <%= migration_class_name %> < GroongaClientModel::Migration
                  create_table_options("    create_table ".size)
                  %> do |t|
 <% target_attributes.each do |attribute| -%>
-      t.<%= attribute.type %> :<%= attribute.name %><%= attribute.inject_options %>
+      t.<%= normalize_attribute_type(attribute.type) %> :<%= attribute.name %><%= attribute.inject_options %>
 <% end -%>
 <% if options[:timestamps] -%>
       t.timestamps

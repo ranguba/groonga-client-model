@@ -120,6 +120,15 @@ module GroongaClientModel
       def normalize_config_key(key)
         key.gsub(/_/, ".")
       end
+
+      def normalize_attribute_type(type)
+        case type
+        when :string
+          :short_text
+        else
+          type
+        end
+      end
     end
   end
 end
