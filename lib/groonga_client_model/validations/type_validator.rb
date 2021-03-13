@@ -1,4 +1,4 @@
-# Copyright (C) 2017  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2017-2021  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -61,19 +61,19 @@ module GroongaClientModel
           if value < 0
             record.errors.add(attribute,
                               :not_a_positive_integer,
-                              options.merge(inspected_value: value.inspect))
+                              **options.merge(inspected_value: value.inspect))
             return
           end
           if value > ((2 ** n_bits) - 1)
             record.errors.add(attribute,
                               :"invalid_uint#{n_bits}",
-                              options.merge(inspected_value: value.inspect))
+                              **options.merge(inspected_value: value.inspect))
             return
           end
         else
           record.errors.add(attribute,
                             :not_a_positive_integer,
-                            options.merge(inspected_value: value.inspect))
+                            **options.merge(inspected_value: value.inspect))
         end
       end
 
@@ -92,7 +92,7 @@ module GroongaClientModel
           if value < min or value > max
             record.errors.add(attribute,
                               :"invalid_int#{n_bits}",
-                              options.merge(inspected_value: value.inspect))
+                              **options.merge(inspected_value: value.inspect))
             return
           end
         else
@@ -135,7 +135,7 @@ module GroongaClientModel
         when Date, Time, Numeric
         else
           record.errors.add(attribute, :not_a_time,
-                            options.merge(inspected_value: value.inspect))
+                            **options.merge(inspected_value: value.inspect))
         end
       end
     end

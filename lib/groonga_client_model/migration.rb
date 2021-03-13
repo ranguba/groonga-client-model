@@ -1,4 +1,4 @@
-# Copyright (C) 2017  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2017-2021  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -420,12 +420,12 @@ module GroongaClientModel
         @table_name = table_name
       end
 
-      def boolean(column_name, options={})
-        @migration.add_column(@table_name, column_name, :bool, options)
+      def boolean(column_name, **options)
+        @migration.add_column(@table_name, column_name, :bool, **options)
       end
       alias_method :bool, :boolean
 
-      def integer(column_name, options={})
+      def integer(column_name, **options)
         options = options.dup
         bit = options.delete(:bit) || 32
         unsigned = options.delete(:unsigned)
@@ -434,31 +434,30 @@ module GroongaClientModel
         else
           type = "int#{bit}"
         end
-        @migration.add_column(@table_name, column_name, type, options)
+        @migration.add_column(@table_name, column_name, type, **options)
       end
 
-      def float(column_name, options={})
-        @migration.add_column(@table_name, column_name, :float, options)
+      def float(column_name, **options)
+        @migration.add_column(@table_name, column_name, :float, **options)
       end
 
-      def time(column_name, options={})
-        @migration.add_column(@table_name, column_name, :time, options)
+      def time(column_name, **options)
+        @migration.add_column(@table_name, column_name, :time, **options)
       end
 
-      def short_text(column_name, options={})
-        @migration.add_column(@table_name, column_name, :short_text, options)
+      def short_text(column_name, **options)
+        @migration.add_column(@table_name, column_name, :short_text, **options)
       end
 
-      def text(column_name, options={})
-        @migration.add_column(@table_name, column_name, :text, options)
+      def text(column_name, **options)
+        @migration.add_column(@table_name, column_name, :text, **options)
       end
 
-      def long_text(column_name, options={})
-        @migration.add_column(@table_name, column_name, :long_text, options)
+      def long_text(column_name, **options)
+        @migration.add_column(@table_name, column_name, :long_text, **options)
       end
 
-      def geo_point(column_name, options={})
-        options = options.dup
+      def geo_point(column_name, **options)
         datum = options.delete(:datum) || :wgs84
         case datum
         when :wgs84
@@ -470,38 +469,37 @@ module GroongaClientModel
           message << "available: [:wgs84, :tokyo]: #{datum.inspect}"
           raise ArgumentError, message
         end
-        @migration.add_column(@table_name, column_name, type, options)
+        @migration.add_column(@table_name, column_name, type, **options)
       end
 
-      def wgs84_geo_point(column_name, options={})
-        geo_point(column_name, options.merge(datum: :wgs84))
+      def wgs84_geo_point(column_name, **options)
+        geo_point(column_name, **options.merge(datum: :wgs84))
       end
 
-      def tokyo_geo_point(column_name, options={})
-        geo_point(column_name, options.merge(datum: :tokyo))
+      def tokyo_geo_point(column_name, **options)
+        geo_point(column_name, **options.merge(datum: :tokyo))
       end
 
-      def reference(column_name, reference_table_name, options={})
+      def reference(column_name, reference_table_name, **options)
         @migration.add_column(@table_name,
                               column_name,
                               reference_table_name,
-                              options)
+                              **options)
       end
 
       def timestamps
         @migration.add_timestamp_columns(@table_name)
       end
 
-      def index(source_table_name, source_column_names, options={})
-        options = options.dup
+      def index(source_table_name, source_column_names, **options)
         source_column_names = Array(source_column_names)
         column_name = options.delete(:name)
         column_name ||= [source_table_name, *source_column_names].join("_")
         @migration.add_column(@table_name,
                               column_name,
                               source_table_name,
-                              options.merge(:type => :index,
-                                            :sources => source_column_names))
+                              **options.merge(:type => :index,
+                                              :sources => source_column_names))
       end
     end
   end

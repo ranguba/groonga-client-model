@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2017  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2016-2021  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,8 @@
 module GroongaClientModel
   class Record
     include AttributeAssignment
-    include ActiveModel::AttributeMethods
+    include ActiveModel::AttributeAssignment
+    include ActiveModel::Attributes
     include ActiveModel::Callbacks
     include ActiveModel::Conversion
     include ActiveModel::Dirty
@@ -53,20 +54,14 @@ module GroongaClientModel
         return if defined?(@defined)
         @defined = true
 
-        boolean_column_names = []
-        non_boolean_column_names = []
         columns.each do |name, column|
-          if (column["value_type"] || {})["name"] == "Bool"
-            boolean_column_names << name
-          else
-            non_boolean_column_names << name
+          type = normalize_type((column["value_type"] || {})["name"])
+          attribute(name, type)
+          if type == :boolean
+            attribute_method_suffix("?")
+            define_attribute_methods(name)
           end
         end
-
-        attribute_method_suffix("=")
-        define_attribute_methods(*non_boolean_column_names)
-        attribute_method_suffix("?")
-        define_attribute_methods(*boolean_column_names)
       end
 
       def count
@@ -131,34 +126,25 @@ module GroongaClientModel
       end
 
       private
-      def define_method_attribute(name)
-        define_method(name) do
-          @attributes[name]
-        end
-      end
-
-      def define_method_attribute=(name)
-        define_method("#{name}=") do |value|
-          if value.is_a?(Hash)
-            value = build_sub_record(name, value)
-          end
-          unless @attributes[name] == value
-            attribute_will_change!(name)
-          end
-          @attributes[name] = value
-        end
-      end
-
-      def define_method_attribute?(name)
-        define_method("#{name}?") do
-          @attributes[name]
+      def normalize_type(groonga_type)
+        case groonga_type
+        when "Bool"
+          :boolean
+        when "ShortText", "Text", "LongText"
+          :string
+        when /\AU?Int\d+\z/
+          :integer
+        when "Float", "Float32"
+          :float
+        when "Time"
+          :datetime
+        else
+          ActiveModel::Type::Value.new
         end
       end
     end
 
     define_model_callbacks :save, :create, :update, :destroy
-
-    attr_reader :attributes
 
     validates(:_key,
               presence: true,
@@ -169,17 +155,22 @@ module GroongaClientModel
               allow_blank: true)
 
     def initialize(attributes=nil)
-      @attributes = {}
       self.class.define_attributes
+
+      super()
       assign_attributes(attributes) if attributes
 
-      if @attributes["_id"]
+      if attribute("_id")
         @new_record = false
         clear_changes_information
       else
         @new_record = true
       end
       @destroyed = false
+    end
+
+    def read_attribute_for_validation(attribute)
+      @attributes[attribute.to_s].value_before_type_cast
     end
 
     def save(validate: true)
@@ -242,6 +233,10 @@ module GroongaClientModel
     end
 
     private
+    def attribute?(attribute)
+      __send__(attribute)
+    end
+
     def save_raw(validate: true)
       if validate
         if valid?

@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2016-2021  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,7 @@ module GroongaClientModel
     def generate
       load_value = {}
       @record.attributes.each do |name, value|
+        next if value.nil?
         load_value[name] = format_value(value)
       end
       if load_value.key?("_id") and load_value.key?("_key")

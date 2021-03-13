@@ -1,4 +1,4 @@
-# Copyright (C) 2016  Kouhei Sutou <kou@clear-code.com>
+# Copyright (C) 2016-2021  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -18,9 +18,21 @@ class TestLoadValueGenerator < Test::Unit::TestCase
   class Memo < GroongaClientModel::Record
     class << self
       def columns
-        TestHelper::Columns.build("tag" => {},
-                                  "tags" => {},
-                                  "created_at" => {})
+        TestHelper::Columns.build("tag" => {
+                                    "value_type" => {
+                                      "name" => "Tag",
+                                    },
+                                  },
+                                  "tags" => {
+                                    "value_type" => {
+                                      "name" => "Tag",
+                                    },
+                                  },
+                                  "created_at" => {
+                                    "value_type" => {
+                                      "name" => "Time",
+                                    },
+                                  })
       end
     end
   end
