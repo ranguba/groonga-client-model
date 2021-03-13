@@ -43,7 +43,7 @@ jobs:
           export BUNDLE_GEMFILE=${PWD}/Gemfile
           bundle install
           PATH=$PWD/bin:$PATH bin/rails webpacker:install
-          PATH=$PWD/bin:$PATH bin/rails test:all
+          PATH=$PWD/bin:$PATH bin/rails test
       - name: "Test: Rails 6.0.3.5"
         run: |
           cd test/apps/rails6.0.3.5
@@ -51,4 +51,3 @@ jobs:
           bundle install
           PATH=$PWD/bin:$PATH bin/rails webpacker:install
           PATH=$PWD/bin:$PATH bin/rails test
-          PATH=$PWD/bin:$PATH bin/rails test:system
