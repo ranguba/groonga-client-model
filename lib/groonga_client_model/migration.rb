@@ -203,7 +203,7 @@ module GroongaClientModel
 
       report(__method__, [table_name, column_name]) do
         @client.request(:column_remove).
-          parameter(:table_name, table_name).
+          parameter(:table, table_name).
           parameter(:name, column_name).
           response
       end
