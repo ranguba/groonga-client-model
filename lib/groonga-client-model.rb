@@ -20,7 +20,6 @@ require "groonga/client"
 
 require "groonga_client_model/version"
 
-require "groonga_client_model/attribute_assignment"
 require "groonga_client_model/client"
 require "groonga_client_model/client_opener"
 require "groonga_client_model/error"
