@@ -113,14 +113,26 @@ module GroongaClientModel
           match_columns(full_text_searchable_column_names)
       end
 
-      def create(attributes=nil)
+      def create(attributes=nil, &block)
         if attributes.is_a?(Array)
           attributes.collect do |attrs|
-            create(attrs)
+            create(attrs, &block)
           end
         else
-          record = new(attributes)
+          record = new(attributes, &block)
           record.save
+          record
+        end
+      end
+
+      def create!(attributes=nil, &block)
+        if attributes.is_a?(Array)
+          attributes.collect do |attrs|
+            create!(attrs, &block)
+          end
+        else
+          record = new(attributes, &block)
+          record.save!
           record
         end
       end
@@ -167,6 +179,8 @@ module GroongaClientModel
         @new_record = true
       end
       @destroyed = false
+
+      yield self if block_given?
     end
 
     def read_attribute_for_validation(attribute)
