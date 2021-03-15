@@ -200,6 +200,10 @@ module GroongaClientModel
       end
     end
 
+    def delete
+      destroy_raw
+    end
+
     def destroy
       run_callbacks(:destroy) do
         destroy_raw
