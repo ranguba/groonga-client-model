@@ -1,10 +1,32 @@
 # NEWS
 
-## 6.0.0 - 2021-03-13
+## 6.0.0 - 2021-03-18
 
 ### Improvements
 
-  * Add support for Active Model 6 or later.
+  * Added support for Active Model 6 or later.
+
+  * Added support for parallel test.
+
+  * migration: Added support for `string` type.
+
+  * migration: Added support for `add_index`.
+
+  * migration: Avoided duplicated index column flags.
+
+  * record: Added support for validation callbacks.
+
+  * migration: Added shortcuts for integer family such as `int32`.
+
+  * record: Added `create!`.
+
+  * record: Added support for initializing by block.
+
+  * record: Added `delete`.
+
+### Fixes
+
+  * migration: Fixed wrong `column_remove` parameter name.
 
 ## 1.0.2 - 2018-02-13
 
