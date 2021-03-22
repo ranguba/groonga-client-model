@@ -1,5 +1,16 @@
 # NEWS
 
+## 6.0.1 - 2021-03-23
+
+### Improvements
+
+  * Removed test files from `.gem`.
+    [GitHub#6][Reported by Maciej Mensfeld]
+
+### Thanks
+
+  * Maciej Mensfeld
+
 ## 6.0.0 - 2021-03-18
 
 ### Improvements
