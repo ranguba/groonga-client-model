@@ -41,7 +41,6 @@ Gem::Specification.new do |spec|
   spec.files += [".yardopts"]
   spec.files += Dir.glob("lib/**/*.{rb,rake,yml}")
   spec.files += Dir.glob("doc/text/*")
-  spec.test_files += Dir.glob("test/**/*")
 
   spec.add_runtime_dependency("groonga-client", ">= 0.4.2")
   spec.add_runtime_dependency("groonga-command-parser")
