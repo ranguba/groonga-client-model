@@ -51,10 +51,10 @@ module GroongaClientModel
 
         title = color("#{command.command_name} (#{event.duration.round(1)}ms)",
                       title_color(command),
-                      true)
+                      bold: true)
         formatted_command = color(command.to_command_format,
                                   command_color(command),
-                                  true)
+                                  bold: true)
         "  #{title}  #{formatted_command}"
       end
     end
